@@ -1,0 +1,6 @@
+node_modules/
+launch-film/snapshots/
+launch-film/.hyperframes/
+*.log
+launch-film/renders/.*
+launch-film/renders/work-*

@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AI Accountant — Launch Film</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Disp"; src: url("assets/fonts/InterDisplay-Black.otf"); font-weight: 900; }
+      @font-face { font-family: "Disp"; src: url("assets/fonts/InterDisplay-Bold.otf"); font-weight: 700; }
+      @font-face { font-family: "Disp"; src: url("assets/fonts/InterDisplay-SemiBold.otf"); font-weight: 600; }
+      @font-face { font-family: "Text"; src: url("assets/fonts/Inter-Regular.otf"); font-weight: 400; }
+      @font-face { font-family: "Text"; src: url("assets/fonts/Inter-Medium.otf"); font-weight: 500; }
+      @font-face { font-family: "Mono"; src: url("assets/fonts/jetbrains-mono-latin-400-normal.woff2"); font-weight: 400; }
+      @font-face { font-family: "Mono"; src: url("assets/fonts/jetbrains-mono-latin-500-normal.woff2"); font-weight: 500; }
+      @font-face { font-family: "Mono"; src: url("assets/fonts/jetbrains-mono-latin-700-normal.woff2"); font-weight: 700; }
+
+      :root {
+        --ink: #ffffff;
+        --mute: #666666;
+        --line: #232327;
+        --acc: #314dd0;
+        --acc-hi: #5b74ff;
+        --red: #ff5b52;
+        --mono: "Mono", "Text", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+      #root {
+        position: relative; width: 100%; height: 100%; overflow: hidden;
+        background: #000; color: var(--ink);
+        font-family: "Text", sans-serif; letter-spacing: -0.04em;
+      }
+      .clip { position: absolute; inset: 0; }
+      .mono { font-family: var(--mono); letter-spacing: -0.01em; }
+      .disp { font-family: "Disp", sans-serif; }
+
+      /* ---------- S1 hook / chaos / question ---------- */
+      #hook { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+      #hook-time { font-family: var(--mono); font-size: 40px; color: var(--mute); letter-spacing: 0.02em; }
+      #cell {
+        position: relative; display: flex; align-items: center; gap: 18px;
+        width: 640px; height: 116px; padding: 0 32px;
+        border: 3px solid #3a3a3f; background: #0c0c0e; font-family: var(--mono); font-size: 52px;
+      }
+      #cell .ref { color: var(--mute); font-size: 30px; }
+      #caret { display: block; width: 5px; height: 60px; background: #fff; }
+
+      #stage { position: absolute; inset: 0; perspective: 900px; perspective-origin: 50% 50%; }
+      #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+      .card {
+        position: absolute; left: 50%; top: 50%;
+        background: #101013; border: 1px solid #2c2c31; border-radius: 10px;
+        font-family: var(--mono); color: #d9d9de; overflow: hidden;
+      }
+      .card.row { display: flex; align-items: center; gap: 18px; padding: 0 20px; font-size: 20px; }
+      .card.row .amt { margin-left: auto; color: #fff; }
+      .tag { display: block; padding: 5px 10px; border-radius: 6px; font-size: 14px; font-weight: 700; letter-spacing: 0.04em; }
+      .tag.bad { color: var(--red); background: rgba(255, 59, 48, 0.12); border: 1px solid rgba(255, 59, 48, 0.5); }
+      .card.inv { padding: 22px; font-size: 14px; display: flex; flex-direction: column; gap: 10px; background: #f1f1f1; color: #222; border-color: #ddd; }
+      .card.inv h4 { font-family: "Disp"; font-weight: 900; font-size: 26px; letter-spacing: -0.03em; }
+      .card.inv .ln { display: block; height: 9px; background: #cfcfcf; border-radius: 3px; }
+      .card.inv .tot { margin-top: auto; display: flex; justify-content: space-between; font-weight: 700; font-size: 18px; }
+      .card.inv .stamp { position: absolute; right: 16px; top: 60px; transform: rotate(-12deg); }
+      .card.grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; padding: 0; }
+      .card.grid i { display: block; border-right: 1px solid #26262b; border-bottom: 1px solid #26262b; font-style: normal; font-size: 13px; padding: 6px; color: #888; }
+      .card.grid i.r { background: rgba(255, 59, 48, 0.22); color: #ff8a84; }
+
+      #counter { position: absolute; left: 64px; top: 52px; display: flex; flex-direction: column; gap: 4px; font-family: var(--mono); }
+      #counter span { font-size: 16px; color: #8a8a90; letter-spacing: 0.12em; }
+      #counter b { font-size: 46px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+      #counter .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--red); margin-right: 10px; }
+
+      .slam-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+      .slam-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 50%, rgba(0,0,0,0.85), rgba(0,0,0,0) 70%); }
+      .slam {
+        position: absolute; font-family: "Disp"; font-weight: 900; font-size: 190px; letter-spacing: -0.055em;
+        line-height: 1; white-space: nowrap; text-shadow: 0 10px 60px rgba(0,0,0,0.9);
+      }
+      #q { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
+      .qline { display: flex; gap: 0.22em; font-family: "Disp"; font-weight: 900; font-size: 176px; letter-spacing: -0.055em; line-height: 1.02; }
+      .qw { display: block; position: relative; }
+      #qbar { position: absolute; left: 0; right: 0; bottom: -6px; height: 12px; background: #fff; transform-origin: 0 50%; }
+      #seed { position: absolute; left: 952px; top: 462px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 40px 18px rgba(91,116,255,0.95); }
+
+      /* ---------- logo (shared) ---------- */
+      #logo { position: absolute; left: 790px; top: 300px; width: 340px; height: 340px; transform-origin: 0 0; }
+      #logo svg, .logo-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+      #glow { position: absolute; inset: -40%; filter: blur(30px); }
+      #glow svg { width: 100%; height: 100%; display: block; }
+      #bugword { position: absolute; left: 156px; top: 64px; font-family: "Disp"; font-weight: 700; font-size: 34px; letter-spacing: -0.04em; }
+
+      #rays {
+        position: absolute; left: 160px; top: -330px; width: 1600px; height: 1600px; border-radius: 50%;
+        background: repeating-conic-gradient(from 0deg, rgba(91,116,255,0.32) 0deg 2deg, rgba(0,0,0,0) 2deg 12deg);
+        -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.6) 25%, transparent 60%);
+        mask-image: radial-gradient(circle, #000 0%, rgba(0,0,0,0.6) 25%, transparent 60%);
+      }
+      #shock { position: absolute; left: 660px; top: 170px; width: 600px; height: 600px; border-radius: 50%; border: 3px solid var(--acc-hi); box-shadow: 0 0 60px rgba(49,77,208,0.8), inset 0 0 60px rgba(49,77,208,0.6); }
+      #meet { position: absolute; left: 0; right: 0; top: 720px; display: flex; justify-content: center; gap: 0.26em; font-family: "Disp"; font-weight: 600; font-size: 78px; letter-spacing: -0.045em; }
+      #meet .w { display: block; }
+
+      /* ---------- S3 categorise ---------- */
+      .wrap { position: absolute; inset: 0; }
+      .hl { position: absolute; left: 100px; top: 360px; display: flex; flex-direction: column; gap: 6px; }
+      .hl .m { display: block; overflow: hidden; padding-bottom: 12px; }
+      .hl .m span { display: block; font-family: "Disp"; font-weight: 900; font-size: 104px; letter-spacing: -0.055em; line-height: 1; }
+      .hl .sub span { color: var(--mute); }
+      #dash-p { position: absolute; left: 860px; top: 150px; width: 980px; height: 790px; perspective: 1600px; }
+      #dash {
+        position: absolute; inset: 0; border-radius: 26px; overflow: hidden;
+        background: linear-gradient(180deg, #121216 0%, #0b0b0e 100%); border: 1px solid #2a2a30;
+        box-shadow: 0 60px 140px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03) inset;
+      }
+      .dtop { display: flex; align-items: center; gap: 18px; height: 70px; padding: 0 28px; border-bottom: 1px solid var(--line); font-size: 20px; color: #aaa; }
+      .dtop .dots { display: flex; gap: 8px; }
+      .dtop .dots i { display: block; width: 12px; height: 12px; border-radius: 50%; background: #333; }
+      .dtop .pill { margin-left: auto; display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 999px; background: rgba(49,77,208,0.16); color: #c9d1ff; font-size: 17px; font-weight: 500; }
+      .dtop .pill i { display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--acc-hi); box-shadow: 0 0 10px var(--acc-hi); }
+      .dhead, .drow { display: grid; grid-template-columns: 1fr 190px 280px; align-items: center; padding: 0 28px; }
+      .dhead { height: 46px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.12em; color: #85858b; border-bottom: 1px solid var(--line); }
+      .drow { position: relative; height: 56px; border-bottom: 1px solid #18181c; font-family: var(--mono); font-size: 19px; color: #cfcfd4; }
+      .drow .amt { text-align: right; padding-right: 30px; color: #fff; }
+      .drow .hi { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(49,77,208,0), rgba(49,77,208,0.28), rgba(49,77,208,0)); opacity: 0; }
+      .cat { position: relative; height: 34px; }
+      .cat em { position: absolute; left: 0; top: 0; height: 34px; display: flex; align-items: center; gap: 9px; font-style: normal; white-space: nowrap; }
+      .cat .un { color: #4a4a50; font-size: 16px; }
+      .chip { padding: 0 14px 0 8px; border-radius: 999px; background: #17171c; border: 1px solid #2d2d35; font-family: "Text"; font-weight: 500; font-size: 17px; color: #fff; letter-spacing: -0.01em; transform-origin: 0 50%; }
+      .tick { display: block; position: relative; width: 20px; height: 20px; border-radius: 50%; background: var(--acc); }
+      .tick::after { content: ""; position: absolute; left: 7px; top: 3.5px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
+      #scan { position: absolute; left: 0; right: 0; top: 116px; height: 3px; background: var(--acc-hi); box-shadow: 0 0 24px 6px rgba(49,77,208,0.85); }
+      #scan::before { content: ""; position: absolute; left: 0; right: 0; bottom: 3px; height: 90px; background: linear-gradient(0deg, rgba(49,77,208,0.25), rgba(49,77,208,0)); }
+      .dfoot { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center; gap: 10px; padding: 0 28px; border-top: 1px solid var(--line); font-size: 19px; color: #8a8a90; }
+      .dfoot b { font-family: var(--mono); color: #fff; font-weight: 700; }
+
+      /* ---------- S4 reconcile ---------- */
+      .col { position: absolute; top: 150px; width: 560px; }
+      #bankcol { left: 230px; }
+      #bookcol { left: 1130px; }
+      .colh { font-family: var(--mono); font-size: 16px; letter-spacing: 0.14em; color: #85858b; height: 50px; }
+      .rrow { position: relative; display: flex; align-items: center; gap: 14px; height: 60px; margin-bottom: 10px; padding: 0 18px; border-radius: 12px; background: #0f0f12; border: 1px solid #222227; font-family: var(--mono); font-size: 19px; color: #cfcfd4; }
+      .rrow .amt { margin-left: auto; color: #fff; }
+      .rrow .tagbox { position: relative; width: 132px; height: 28px; perspective: 400px; }
+      .rrow .tagbox .tag { position: absolute; right: 0; top: 0; backface-visibility: hidden; }
+      .tag.ok { color: #fff; background: rgba(49,77,208,0.3); border: 1px solid rgba(91,116,255,0.8); }
+      #links { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: visible; }
+      #links path { fill: none; stroke: var(--acc-hi); stroke-width: 2.5; filter: drop-shadow(0 0 8px rgba(91,116,255,0.9)); }
+      #links circle { fill: #fff; }
+      #recbar { position: absolute; left: 0; right: 0; top: 760px; display: flex; align-items: center; justify-content: center; gap: 44px; }
+      #gauge { position: relative; width: 170px; height: 170px; }
+      #gauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+      #gauge .pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 38px; }
+      #rech { display: block; font-family: "Disp"; font-weight: 900; font-size: 150px; letter-spacing: -0.055em; line-height: 1; }
+
+      /* ---------- S5 sync ---------- */
+      #s5h { position: absolute; left: 0; right: 0; top: 130px; display: flex; justify-content: center; gap: 0.24em; font-family: "Disp"; font-weight: 900; font-size: 112px; letter-spacing: -0.055em; }
+      #s5h .w { display: block; }
+      #packet { position: absolute; left: 900px; top: 580px; width: 120px; height: 120px; border-radius: 28px; background: var(--acc); box-shadow: 0 0 80px 10px rgba(49,77,208,0.7); display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 26px; }
+      #packet i { display: block; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.9); }
+      #trail { position: absolute; left: 420px; top: 632px; width: 620px; height: 16px; border-radius: 8px; background: linear-gradient(90deg, rgba(91,116,255,0), rgba(91,116,255,0.9)); filter: blur(4px); transform-origin: 100% 50%; }
+      #ledger { position: absolute; left: 1000px; top: 380px; width: 800px; height: 520px; border-radius: 26px; background: #0e0e11; border: 1px solid #2a2a30; padding: 34px 40px; box-shadow: 0 60px 140px rgba(0,0,0,0.8); }
+      #ledger .lh { display: flex; align-items: center; justify-content: space-between; font-family: "Disp"; font-weight: 700; font-size: 32px; margin-bottom: 26px; }
+      #posted { display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 10px; border-radius: 999px; background: rgba(49,77,208,0.18); font-family: "Text"; font-weight: 500; font-size: 20px; color: #dfe4ff; letter-spacing: -0.01em; }
+      .jl { display: grid; grid-template-columns: 70px 1fr 200px; height: 58px; align-items: center; border-bottom: 1px solid #1b1b20; font-family: var(--mono); font-size: 22px; color: #d9d9de; }
+      .jl .dc { color: var(--mute); }
+      .jl.cr .nm { padding-left: 40px; }
+      .jl .v { text-align: right; color: #fff; }
+      #impact { position: absolute; left: 920px; top: 560px; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--acc-hi); box-shadow: 0 0 50px rgba(91,116,255,0.9); }
+
+      /* ---------- S6 proof ---------- */
+      #tiles { position: absolute; left: 166px; top: 196px; width: 1588px; display: grid; grid-template-columns: 780px 780px; grid-auto-rows: 330px; gap: 28px; }
+      .tile { position: relative; border-radius: 28px; background: #0b0b0e; border: 2px solid #1f1f24; padding: 46px 54px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+      .tile .n { display: flex; align-items: baseline; font-family: "Disp"; font-weight: 900; font-size: 180px; letter-spacing: -0.06em; line-height: 0.9; }
+      .tile .n .suf { color: #fff; }
+      .tile .lb { margin-top: 18px; font-family: "Text"; font-weight: 500; font-size: 32px; color: #8a8a90; letter-spacing: -0.02em; }
+      .tile .edge { position: absolute; inset: -2px; border-radius: 28px; border: 2px solid var(--acc-hi); box-shadow: 0 0 40px rgba(49,77,208,0.6) inset; opacity: 0; }
+
+      /* ---------- S7 the line ---------- */
+      #line { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+      #l1 { display: flex; font-family: "Disp"; font-weight: 700; font-size: 96px; letter-spacing: -0.045em; white-space: pre; }
+      #l1 span { display: block; }
+      #slot { display: grid; justify-items: center; align-items: center; font-family: "Disp"; font-weight: 900; font-size: 210px; letter-spacing: -0.06em; line-height: 1.05; }
+      #slot > div { grid-area: 1 / 1; position: relative; }
+      #hours { color: #5c5c62; }
+      #strike { position: absolute; left: -10px; right: -10px; top: 54%; height: 16px; background: #fff; transform-origin: 0 50%; }
+      #minutes { color: var(--acc-hi); text-shadow: 0 0 60px rgba(49,77,208,0.6); }
+
+      /* ---------- S8 end card ---------- */
+      #endglow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% 115%, rgba(49,77,208,0.35), rgba(49,77,208,0) 70%); }
+      #elogo { position: absolute; left: 840px; top: 190px; width: 240px; height: 240px; }
+      #glint { position: absolute; left: 928px; top: 278px; width: 64px; height: 64px; }
+      #eword { position: absolute; left: 0; right: 0; top: 470px; text-align: center; font-family: "Disp"; font-weight: 700; font-size: 92px; letter-spacing: -0.045em; }
+      #ecta { position: absolute; left: 0; right: 0; top: 640px; display: flex; justify-content: center; align-items: center; gap: 36px; }
+      #eurl { font-family: "Disp"; font-weight: 600; font-size: 44px; color: #cfcfd4; letter-spacing: -0.03em; }
+      #pillwrap { position: relative; width: 260px; height: 84px; }
+      #pill { position: absolute; inset: 0; border-radius: 999px; background: var(--acc); display: flex; align-items: center; justify-content: center; gap: 12px; font-family: "Disp"; font-weight: 700; font-size: 34px; letter-spacing: -0.03em; box-shadow: 0 16px 50px rgba(49,77,208,0.5); }
+      #pill .arr { display: block; width: 18px; height: 18px; border-top: 3.5px solid #fff; border-right: 3.5px solid #fff; transform: rotate(45deg); margin-left: -2px; }
+      .halo { position: absolute; inset: 0; border-radius: 999px; border: 2px solid var(--acc-hi); }
+      #efirst { position: absolute; left: 0; right: 0; top: 960px; text-align: center; font-family: var(--mono); font-size: 22px; color: #8a8a90; letter-spacing: 0.08em; }
+
+      /* ---------- FX ---------- */
+      #fx { pointer-events: none; }
+      #vig { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 85% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.65) 100%); }
+      #grain {
+        position: absolute; inset: 0; opacity: 0.09; mix-blend-mode: screen;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.4 0'/></filter><rect width='256' height='256' filter='url(%23n)'/></svg>");
+        background-size: 256px 256px;
+      }
+      #flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+      #flashb { position: absolute; inset: 0; background: var(--acc); opacity: 0; mix-blend-mode: screen; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20" data-width="1920" data-height="1080">
+      <svg width="0" height="0" style="position: absolute">
+        <defs>
+          <path id="p1" d="M0 0 C7.03241698 6.07345103 10.79502549 12.87143943 14.6875 21.25 C15.24324707 22.42473877 15.79899414 23.59947754 16.37158203 24.80981445 C21.36160395 35.38452004 26.18423524 46.03854016 30.99047852 56.69775391 C34.26939571 63.96317634 37.59166107 71.20441394 41 78.41015625 C41.3474527 79.1456218 41.6949054 79.88108734 42.05288696 80.63883972 C43.72467369 84.17465465 45.40321983 87.70704761 47.09130859 91.23510742 C47.6938592 92.50561396 48.29624449 93.77619892 48.8984375 95.046875 C49.69000244 96.70348145 49.69000244 96.70348145 50.49755859 98.39355469 C53.59748037 105.77293963 53.45604671 112.76767713 50.72265625 120.23046875 C48.59283206 124.92634618 45.95315701 127.67126666 41.4375 130.3125 C35.34289282 132.06857326 30.69084391 131.06843755 25.19921875 128.1953125 C23.60742549 127.30496782 22.02029798 126.40623948 20.4375 125.5 C5.53245108 117.40677367 -10.13650052 114.20543348 -26.9375 118.8125 C-32.9907429 120.97102072 -38.6226359 124.0559459 -44.16479492 127.28881836 C-49.45403416 130.29416852 -54.41580333 132.23976077 -60.60546875 130.84375 C-66.91547775 127.50711411 -70.06419545 123.53714548 -72.5625 116.875 C-74.61027312 106.44997321 -70.84554052 98.24557949 -66.46875 88.96875 C-66.10258575 88.18209961 -65.73642151 87.39544922 -65.35916138 86.58496094 C-64.16068426 84.01280965 -62.95544001 81.44389451 -61.75 78.875 C-60.90756575 77.07118512 -60.06561418 75.26714475 -59.22412109 73.46289062 C-57.91240574 70.65073325 -56.60025866 67.83878463 -55.28622437 65.02770996 C-52.15148176 58.31978426 -49.04196509 51.60058513 -45.9453125 44.875 C-45.08664729 43.01234271 -44.22792414 41.14971212 -43.36914062 39.28710938 C-42.13240045 36.60466673 -40.89651557 33.921852 -39.66381836 31.23754883 C-26.84659878 3.33844284 -26.84659878 3.33844284 -16.375 -2.125 C-10.53142581 -3.05997187 -5.31988595 -2.65994297 0 0 Z" transform="translate(138.25,63.625)" />
+          <path id="p2" d="M0 0 C0.10199025 6.93753403 0.17171192 13.87487245 0.21972656 20.81298828 C0.23975732 23.16983261 0.26698992 25.52662778 0.30175781 27.88330078 C0.35065172 31.28430362 0.37305502 34.6846455 0.390625 38.0859375 C0.41127014 39.12801361 0.43191528 40.17008972 0.45318604 41.2437439 C0.45524539 48.06192651 -0.44091437 54.06366385 -4 60 C-8.17426067 63.73253199 -12.36600862 65.57745065 -18 66 C-18 66.66 -18 67.32 -18 68 C-16.205625 68.37125 -16.205625 68.37125 -14.375 68.75 C-9.65607912 69.97558546 -5.85097516 71.46486491 -2.86523438 75.55419922 C1.41801041 83.68048916 0.43436366 92.6478212 0.25 101.5625 C0.22990488 103.25583826 0.21165943 104.94919953 0.1953125 106.64257812 C0.15155338 110.76229372 0.0826939 114.88088951 0 119 C-1.31411865 119.18828369 -1.31411865 119.18828369 -2.65478516 119.38037109 C-4.39187744 119.63681396 -4.39187744 119.63681396 -6.1640625 119.8984375 C-7.3082666 120.06520996 -8.4524707 120.23198242 -9.63134766 120.40380859 C-18.39000238 121.95393433 -25.9323991 125.7932306 -33.52294922 130.27001953 C-38.55329687 133.12677701 -43.50328017 134.78864659 -49.35546875 133.46875 C-55.66547775 130.13211411 -58.81419545 126.16214548 -61.3125 119.5 C-63.36027312 109.07497321 -59.59554052 100.87057949 -55.21875 91.59375 C-54.85258575 90.80709961 -54.48642151 90.02044922 -54.10916138 89.20996094 C-52.91068426 86.63780965 -51.70544001 84.06889451 -50.5 81.5 C-49.65756575 79.69618512 -48.81561418 77.89214475 -47.97412109 76.08789062 C-46.66240574 73.27573325 -45.35025866 70.46378463 -44.03622437 67.65270996 C-40.90148176 60.94478426 -37.79196509 54.22558513 -34.6953125 47.5 C-33.83664729 45.63734271 -32.97792414 43.77471212 -32.11914062 41.91210938 C-30.88240045 39.22966673 -29.64651557 36.546852 -28.41381836 33.86254883 C-15.18086331 5.05851585 -15.18086331 5.05851585 -4.625 0.5625 C-2 0 -2 0 0 0 Z" transform="translate(127,61)" />
+          <path id="p3" d="M0 0 C0.66 0 1.32 0 2 0 C2.00879936 0.91295837 2.00879936 0.91295837 2.01777649 1.84436035 C2.08192739 8.20415721 2.1664024 14.56345817 2.26245117 20.92285156 C2.29561573 23.29322758 2.32367378 25.66368095 2.34643555 28.03417969 C2.38013688 31.45020376 2.43246209 34.8655243 2.48828125 38.28125 C2.49467117 39.33364868 2.5010611 40.38604736 2.50764465 41.47033691 C2.64708722 48.51802194 3.44049141 54.31430763 7.5625 60.25 C11.35611538 62.9736213 15.6251164 64.43038527 20 66 C20 66.66 20 67.32 20 68 C19.32453125 68.24234375 18.6490625 68.4846875 17.953125 68.734375 C11.54736596 71.14116308 7.61614335 72.79820657 4.43432617 79.10180664 C2.69796293 83.25930082 2.52623006 87.09657363 2.48828125 91.55859375 C2.47033005 92.34774673 2.45237885 93.13689972 2.43388367 93.94996643 C2.38013472 96.4457582 2.34600035 98.94136272 2.3125 101.4375 C2.2792955 103.13999982 2.24480298 104.84247504 2.20898438 106.54492188 C2.12442934 110.69647864 2.05745088 114.8479833 2 119 C1.34 119 0.68 119 0 119 C-0.00410889 117.96182129 -0.00821777 116.92364258 -0.01245117 115.85400391 C-0.03441891 111.9583341 -0.08888676 108.06364926 -0.15258789 104.16845703 C-0.17561555 102.49081955 -0.19012744 100.81304063 -0.19555664 99.13525391 C0.01698632 85.19938876 0.01698632 85.19938876 -6 73 C-8.98897545 70.81390396 -8.98897545 70.81390396 -12.3125 69.875 C-13.91544922 69.31425781 -13.91544922 69.31425781 -15.55078125 68.7421875 C-16.76314453 68.37480469 -16.76314453 68.37480469 -18 68 C-18 67.34 -18 66.68 -18 66 C-17.18015625 65.72027344 -16.3603125 65.44054687 -15.515625 65.15234375 C-8.33185897 62.73820601 -8.33185897 62.73820601 -3.3125 57.4375 C-1.6544176 53.09490324 -0.87678928 49.60122186 -0.79467773 44.95605469 C-0.77473251 43.95531921 -0.75478729 42.95458374 -0.73423767 41.92352295 C-0.71752518 40.85047913 -0.70081268 39.7774353 -0.68359375 38.671875 C-0.66281265 37.56773254 -0.64203156 36.46359009 -0.62062073 35.32598877 C-0.55526354 31.80072217 -0.49630436 28.27538141 -0.4375 24.75 C-0.39430164 22.35936735 -0.35068693 19.96874218 -0.30664062 17.578125 C-0.19959628 11.71882827 -0.09780415 5.85945786 0 0 Z" transform="translate(127,61)" />
+          <clipPath id="bellclip"><circle id="bellcirc" cx="128" cy="128" r="0" /></clipPath>
+          <filter id="mb3" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur id="mb3g" stdDeviation="0 0" /></filter>
+          <filter id="mb4" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur id="mb4g" stdDeviation="0 0" /></filter>
+        </defs>
+      </svg>
+
+      <audio id="score" src="assets/score.wav" data-start="0" data-duration="20" data-track-index="10"></audio>
+
+      <!-- S1: hook → chaos → question -->
+      <section id="s1" class="clip" data-layout-allow-overlap data-start="0" data-duration="3.62" data-track-index="1">
+        <div id="stage"><div id="cam"></div></div>
+        <div id="hook">
+          <div id="hook-time">31 March. 11:58 PM.</div>
+          <div id="cell"><span class="ref">F2</span><span>=SUM(</span><i id="caret"></i></div>
+        </div>
+        <div id="counter"><span><i class="dot"></i>UNRECONCILED ROWS</span><b id="count">0</b></div>
+        <div class="slam-wrap">
+          <div class="slam-bg" id="slambg"></div>
+          <div class="slam" id="w1">Bank statements.</div>
+          <div class="slam" id="w2">Invoices.</div>
+          <div class="slam" id="w3">Ledgers.</div>
+          <div class="slam" id="w4">Reconciliation.</div>
+        </div>
+        <div id="q">
+          <div class="qline"><span class="qw">Still</span><span class="qw">doing</span><span class="qw">this</span></div>
+          <div class="qline"><span class="qw">by</span><span class="qw">hand?<i id="qbar"></i></span></div>
+        </div>
+        <div id="seed"></div>
+      </section>
+
+      <!-- S2: reveal -->
+      <section id="s2" class="clip" data-layout-allow-overlap data-start="3.6" data-duration="2.7" data-track-index="2">
+        <div id="rays"></div>
+        <div id="shock"></div>
+        <div id="meet"><span class="w">Meet</span><span class="w">your</span><span class="w">new</span><span class="w">AI</span><span class="w">Accountant.</span></div>
+      </section>
+
+      <!-- persistent logo: reveal → corner bug -->
+      <div id="logolayer" class="clip" data-layout-allow-overlap data-start="3.6" data-duration="9.95" data-track-index="3">
+        <div id="logo">
+          <div id="glow"><svg viewBox="58 58 140 140"><use href="#p3" fill="#5b74ff" /></svg></div>
+          <svg viewBox="58 58 140 140">
+            <g clip-path="url(#bellclip)"><use href="#p1" fill="#fff" /><use href="#p2" fill="#fff" /></g>
+            <use id="lstar" href="#p3" fill="#5b74ff" />
+          </svg>
+        </div>
+        <div id="bugword">AI Accountant</div>
+      </div>
+
+      <!-- S3: categorise -->
+      <section id="s3" class="clip" data-layout-allow-overlap data-start="6.0" data-duration="3.05" data-track-index="4">
+        <div class="wrap" id="s3w" style="filter: url(#mb3)">
+          <div class="hl">
+            <div class="m"><span id="cat1">Categorised.</span></div>
+            <div class="m sub"><span id="cat2">In seconds.</span></div>
+          </div>
+          <div id="dash-p">
+            <div id="dash">
+              <div class="dtop"><span class="dots"><i></i><i></i><i></i></span><span>Bank feed · HDFC Current A/c</span><span class="pill"><i></i>AI Accountant</span></div>
+              <div class="dhead"><span>NARRATION</span><span style="text-align: right; padding-right: 30px">AMOUNT</span><span>CATEGORY</span></div>
+              <div id="drows"></div>
+              <div id="scan"></div>
+              <div class="dfoot"><b id="catcount">0</b> of 10 transactions categorised</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S4: reconcile -->
+      <section id="s4" class="clip" data-layout-allow-overlap data-start="9.0" data-duration="2.55" data-track-index="5">
+        <div class="wrap" id="s4w" style="filter: url(#mb4)">
+          <svg id="links" viewBox="0 0 1920 1080"></svg>
+          <div class="col" id="bankcol"><div class="colh">BANK STATEMENT</div></div>
+          <div class="col" id="bookcol"><div class="colh">BOOKS · LEDGER</div></div>
+          <div id="recbar">
+            <div id="gauge">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="44" fill="none" stroke="#1d1d22" stroke-width="7" />
+                <circle id="garc" cx="50" cy="50" r="44" fill="none" stroke="#5b74ff" stroke-width="7" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" />
+              </svg>
+              <div class="pct"><span id="gpct">0</span>%</div>
+            </div>
+            <span id="rech">Reconciled.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- S5: sync -->
+      <section id="s5" class="clip" data-layout-allow-overlap data-start="11.5" data-duration="2.05" data-track-index="6">
+        <div id="s5h"><span class="w">Posted</span><span class="w">to</span><span class="w">your</span><span class="w">books.</span></div>
+        <div id="ledger">
+          <div class="lh"><span>Journal entries</span><span id="posted"><i class="tick"></i>Posted</span></div>
+          <div id="jlines"></div>
+        </div>
+        <div id="trail"></div>
+        <div id="impact"></div>
+        <div id="packet"><i></i><i style="width: 70%"></i><i style="width: 85%"></i></div>
+      </section>
+
+      <!-- S6: proof -->
+      <section id="s6" class="clip" data-start="13.5" data-duration="3.05" data-track-index="7">
+        <div id="tiles">
+          <div class="tile"><i class="edge"></i><div class="n"><span id="n1">0</span><span class="suf">M+</span></div><div class="lb">transactions analysed</div></div>
+          <div class="tile"><i class="edge"></i><div class="n"><span id="n2">0</span><span class="suf">%</span></div><div class="lb">of manual accounting tasks, handled</div></div>
+          <div class="tile"><i class="edge"></i><div class="n"><span id="n3">0</span><span class="suf">K+</span></div><div class="lb">vendors categorised</div></div>
+          <div class="tile"><i class="edge"></i><div class="n"><span id="n4">ISO</span></div><div class="lb">certified</div></div>
+        </div>
+      </section>
+
+      <!-- S7: the line -->
+      <section id="s7" class="clip" data-layout-allow-overlap data-start="16.5" data-duration="1.1" data-track-index="8">
+        <div id="line">
+          <div id="l1"></div>
+          <div id="slot">
+            <div id="hours">hours<i id="strike"></i></div>
+            <div id="minutes">minutes.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S8: end card -->
+      <section id="s8" class="clip" data-layout-allow-overlap data-start="17.5" data-duration="2.5" data-track-index="9">
+        <div id="endglow"></div>
+        <div id="elogo">
+          <svg class="logo-svg" viewBox="58 58 140 140"><use href="#p1" fill="#fff" /><use href="#p2" fill="#fff" /><use id="estar" href="#p3" fill="#000" /></svg>
+        </div>
+        <svg id="glint" viewBox="-50 -50 100 100"><path d="M0,-50 C4,-8 8,-4 50,0 C8,4 4,8 0,50 C-4,8 -8,4 -50,0 C-8,-4 -4,-8 0,-50Z" fill="#fff" /></svg>
+        <div id="eword">AI Accountant</div>
+        <div id="ecta">
+          <span id="eurl">aiaccountant.com</span>
+          <div id="pillwrap"><i class="halo" id="halo1"></i><i class="halo" id="halo2"></i><div id="pill">Talk to us<i class="arr"></i></div></div>
+        </div>
+        <div id="efirst">INDIA'S FIRST AI ACCOUNTANT</div>
+      </section>
+
+      <!-- FX overlay -->
+      <div id="fx" class="clip" data-layout-allow-overlap data-start="0" data-duration="20" data-track-index="11">
+        <div id="vig" data-layout-allow-overlap></div>
+        <div id="grain" data-layout-allow-overlap></div>
+        <div id="flashb" data-layout-allow-overlap></div>
+        <div id="flash" data-layout-allow-overlap></div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        // ---------- deterministic helpers ----------
+        let seed = 20261007;
+        const rnd = () => {
+          seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+        const R = (a, b) => a + (b - a) * rnd();
+        const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+        const $ = (s) => document.querySelector(s);
+        const $$ = (s) => Array.from(document.querySelectorAll(s));
+        const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+        const inr = (n) => n.toLocaleString("en-IN", { maximumFractionDigits: 0 });
+
+        // ---------- build chaos cards ----------
+        const cam = $("#cam");
+        const narr = ["NEFT/HDFC/88213", "UPI/SWIGGY/948213", "IMPS/RAZORPAY/77812", "ACH/AWS INDIA/0091", "NEFT/AMZN SELLER/2231", "UPI/ZOMATO/55120", "RTGS/ICICI/440912", "UPI/UBER/IN/10293", "CHQ/000412/VENDOR", "NEFT/GST PMT/7781", "UPI/PAYTM/88123", "IMPS/SALARY/0420"];
+        const cards = [];
+        for (let i = 0; i < 72; i++) {
+          const kind = i % 7 === 0 ? "inv" : i % 7 === 3 ? "grid" : i % 11 === 5 ? "inv" : "row";
+          let c, w, h;
+          if (kind === "row") {
+            w = 600; h = 68;
+            c = el("div", "card row", `<span>${pick(narr)}</span><span class="amt">₹${inr(Math.floor(R(800, 240000)))}.00</span>${rnd() < 0.55 ? '<b class="tag bad">UNMATCHED</b>' : ""}`);
+          } else if (kind === "inv") {
+            w = 300; h = 380;
+            c = el("div", "card inv", `<h4>TAX INVOICE</h4><span>GSTIN 27AAB${Math.floor(R(1000, 9999))}K1Z</span><i class="ln" style="width:90%"></i><i class="ln" style="width:70%"></i><i class="ln" style="width:82%"></i><i class="ln" style="width:60%"></i><i class="ln" style="width:76%"></i><div class="tot"><span>TOTAL</span><span>₹${inr(Math.floor(R(5000, 400000)))}</span></div>${rnd() < 0.6 ? '<b class="tag bad stamp">UNMATCHED</b>' : ""}`);
+          } else {
+            w = 460; h = 220;
+            let cells = "";
+            for (let k = 0; k < 30; k++) cells += `<i class="${rnd() < 0.18 ? "r" : ""}">${rnd() < 0.5 ? inr(Math.floor(R(100, 99999))) : "#N/A"}</i>`;
+            c = el("div", "card grid", cells);
+          }
+          c.setAttribute("data-layout-allow-overlap", ""); c.querySelectorAll("*").forEach((n) => n.setAttribute("data-layout-allow-overlap", ""));
+          c.style.width = w + "px"; c.style.height = h + "px";
+          c.style.marginLeft = -w / 2 + "px"; c.style.marginTop = -h / 2 + "px";
+          cam.appendChild(c);
+          cards.push(c);
+        }
+
+        // ---------- build S3 rows ----------
+        const rows3 = [
+          ["UPI/SWIGGY/948213", "1,240.00", "Staff welfare"],
+          ["NEFT/AMZN SELLER/2231", "18,400.00", "Office supplies"],
+          ["IMPS/RAZORPAY/77812", "52,000.00", "Payment gateway"],
+          ["ACH/AWS INDIA/0091", "9,870.00", "Cloud & software"],
+          ["UPI/UBER/IN/10293", "642.00", "Travel"],
+          ["NEFT/GST PMT/7781", "86,310.00", "GST payable"],
+          ["RTGS/WEWORK/4409", "1,45,000.00", "Rent"],
+          ["UPI/ZOMATO/55120", "2,180.00", "Staff welfare"],
+          ["IMPS/SALARY/0420", "3,20,000.00", "Salaries"],
+          ["ACH/GOOGLE IND/771", "14,999.00", "Cloud & software"],
+        ];
+        const drows = $("#drows");
+        rows3.forEach(([n, a, c], i) => {
+          drows.appendChild(el("div", "drow", `<i class="hi"></i><span>${n}</span><span class="amt">₹${a}</span><span class="cat"><em class="un">Uncategorised</em><em class="chip"><i class="tick"></i>${c}</em></span>`));
+        });
+
+        // ---------- build S4 columns + links ----------
+        const bank4 = [["UPI/SWIGGY/948213", "1,240"], ["IMPS/RAZORPAY/77812", "52,000"], ["ACH/AWS INDIA/0091", "9,870"], ["NEFT/AMZN/2231", "18,400"], ["RTGS/WEWORK/4409", "1,45,000"], ["UPI/UBER/10293", "642"], ["NEFT/GST/7781", "86,310"]];
+        const book4 = [["Cloud & software", "9,870"], ["Razorpay settlements", "52,000"], ["Rent · WeWork", "1,45,000"], ["Staff welfare", "1,240"], ["GST payable", "86,310"], ["Office supplies", "18,400"], ["Travel", "642"]];
+        const perm = [3, 1, 0, 5, 2, 6, 4]; // bank i -> book perm[i]
+        const bankcol = $("#bankcol"), bookcol = $("#bookcol");
+        bank4.forEach(([n, a]) => bankcol.appendChild(el("div", "rrow", `<span>${n}</span><span class="amt">₹${a}</span><span class="tagbox"><b class="tag bad tu">UNMATCHED</b><b class="tag ok tk">MATCHED</b></span>`)));
+        book4.forEach(([n, a]) => bookcol.appendChild(el("div", "rrow", `<span style="font-family:Text;font-weight:500;letter-spacing:-0.01em">${n}</span><span class="amt">₹${a}</span>`)));
+        const links = $("#links");
+        const NS = "http://www.w3.org/2000/svg";
+        const rowY = (i) => 150 + 50 + i * 70 + 30;
+        bank4.forEach((_, i) => {
+          const x1 = 230 + 560, y1 = rowY(i), x2 = 1130, y2 = rowY(perm[i]);
+          const p = document.createElementNS(NS, "path");
+          p.setAttribute("d", `M${x1},${y1} C${x1 + 150},${y1} ${x2 - 150},${y2} ${x2},${y2}`);
+          p.setAttribute("pathLength", "1"); p.setAttribute("stroke-dasharray", "1"); p.setAttribute("stroke-dashoffset", "1");
+          p.id = "lk" + i; links.appendChild(p);
+          [[x1, y1], [x2, y2]].forEach(([cx, cy], k) => {
+            const c = document.createElementNS(NS, "circle");
+            c.setAttribute("cx", cx); c.setAttribute("cy", cy); c.setAttribute("r", "6");
+            c.id = `lk${i}d${k}`; links.appendChild(c);
+          });
+        });
+
+        // ---------- build S5 journal ----------
+        const jl = [["Dr", "Cloud & software", "9,870.00", ""], ["Cr", "HDFC Bank", "9,870.00", "cr"], ["Dr", "Staff welfare", "1,240.00", ""], ["Cr", "HDFC Bank", "1,240.00", "cr"], ["Dr", "HDFC Bank", "52,000.00", ""], ["Cr", "Razorpay settlements", "52,000.00", "cr"]];
+        const jlines = $("#jlines");
+        jl.forEach(([dc, nm, v, k]) => jlines.appendChild(el("div", "jl " + k, `<span class="dc">${dc}</span><span class="nm">${nm}</span><span class="v">₹${v}</span>`)));
+
+        // ---------- build S7 chars ----------
+        const l1 = $("#l1");
+        const l1chars = Array.from("Accounting done for you in").map((ch) => { const s = el("span", "", ch === " " ? " " : ch); l1.appendChild(s); return s; });
+
+        // =====================================================================
+        const tl = gsap.timeline({ paused: true, defaults: { ease: "expo.out" } });
+
+        // FX: grain crawl + flashes
+        tl.fromTo("#grain", { backgroundPosition: "0px 0px" }, { backgroundPosition: "58200px 36600px", duration: 20, ease: "steps(600)" }, 0);
+        const flash = (t, o = 0.9, d = 0.3) => tl.fromTo("#flash", { opacity: o }, { opacity: 0, duration: d, ease: "power2.out", immediateRender: false }, t);
+        const flashB = (t, o = 0.5, d = 0.4) => tl.fromTo("#flashb", { opacity: o }, { opacity: 0, duration: d, ease: "power2.out", immediateRender: false }, t);
+
+        // ---------- S1 HOOK 0 – 0.5 ----------
+        tl.fromTo("#hook", { scale: 1.0 }, { scale: 1.12, duration: 0.5, ease: "power1.in" }, 0);
+        tl.fromTo("#hook-time", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.25 }, 0.02);
+        tl.set("#caret", { opacity: 0 }, 0.17).set("#caret", { opacity: 1 }, 0.33);
+        tl.set("#hook", { opacity: 0 }, 0.5);
+
+        // ---------- S1 CHAOS 0.5 – 2.4 ----------
+        tl.fromTo("#counter", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 0.5);
+        const cnt = { v: 0 };
+        tl.to(cnt, { v: 48213, duration: 1.9, ease: "power2.in", onUpdate: () => { $("#count").textContent = inr(Math.round(cnt.v)); } }, 0.5);
+
+        const FREEZE = 2.4;
+        cards.forEach((c, i) => {
+          const ts = 0.42 + (i / cards.length) * 1.45 + R(-0.05, 0.05);
+          const dur = FREEZE - ts;
+          const zEnd = R(-650, 620);
+          const speed = R(1700, 2900);
+          const ang = R(0, Math.PI * 2), rad = R(180, 1150);
+          const x = Math.cos(ang) * rad * 1.5, y = Math.sin(ang) * rad * 0.8;
+          const rz = R(-25, 25), ry = R(-35, 35), rx = R(-20, 20);
+          tl.fromTo(c, { x, y, z: zEnd - speed * dur, rotationZ: rz - 30, rotationY: ry, rotationX: rx, opacity: 0 },
+            { z: zEnd, rotationZ: rz, duration: dur, ease: "none" }, ts);
+          tl.to(c, { opacity: 1, duration: 0.18, ease: "none" }, ts);
+        });
+
+        // camera shake (deterministic)
+        const words = [0.5, 1.0, 1.5, 2.0];
+        let prevX = 0, prevY = 0;
+        for (let t = 0.5; t < FREEZE - 1e-6; t += 1 / 30) {
+          let amp = 2 + 10 * Math.pow((t - 0.5) / 1.9, 2);
+          words.forEach((w) => { if (t >= w) amp += 22 * Math.exp(-(t - w) / 0.07); });
+          const nx = R(-1, 1) * amp, ny = R(-1, 1) * amp;
+          tl.fromTo("#cam", { x: prevX, y: prevY }, { x: nx, y: ny, duration: 1 / 30, ease: "none", immediateRender: false }, t);
+          prevX = nx; prevY = ny;
+        }
+        tl.to("#cam", { x: 0, y: 0, duration: 0.03, ease: "none" }, FREEZE);
+
+        // word slams
+        tl.fromTo("#slambg", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 0.5);
+        ["#w1", "#w2", "#w3", "#w4"].forEach((id, k) => {
+          const t = words[k];
+          tl.fromTo(id, { opacity: 0, scale: 1.65, filter: "blur(18px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16 }, t);
+          tl.to(id, { scale: 0.94, duration: 0.33, ease: "none" }, t + 0.16);
+          tl.set(id, { opacity: 0 }, Math.min(t + 0.5, FREEZE));
+        });
+
+        // ---------- S1 QUESTION 2.4 – 3.6 ----------
+        tl.set("#stage", { filter: "grayscale(1) brightness(0.32)" }, FREEZE);
+        tl.set("#counter", { opacity: 0 }, FREEZE);
+        flash(FREEZE, 0.35, 0.12);
+        $$(".qw").forEach((w, i) => {
+          tl.fromTo(w, { opacity: 0, y: 80, scale: 1.25 }, { opacity: 1, y: 0, scale: 1, duration: 0.2 }, 2.45 + i * 0.14);
+        });
+        tl.fromTo("#qbar", { scaleX: 0 }, { scaleX: 1, duration: 0.18, ease: "power3.out" }, 3.08);
+        tl.to("#stage", { scale: 0.03, rotation: 40, filter: "grayscale(1) brightness(0.1) blur(10px)", duration: 0.42, ease: "power4.in" }, 2.95);
+        tl.to("#q", { scaleY: 0.02, scaleX: 1.25, duration: 0.12, ease: "power4.in" }, 3.4);
+        tl.to("#q", { opacity: 0, duration: 0.04, ease: "none" }, 3.52);
+        tl.fromTo("#seed", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.2, ease: "power2.in" }, 3.72);
+        tl.to("#seed", { scale: 2.2, duration: 0.08, ease: "power2.in" }, 3.92);
+
+        // ---------- S2 REVEAL 4.0 – 6.0 ----------
+        const DROP = 4.0;
+        flash(DROP, 1, 0.18);
+        flashB(DROP, 0.45, 0.35);
+        tl.fromTo("#lstar", { scale: 0, rotation: -90, transformOrigin: "50% 50%" }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.2)" }, DROP);
+        tl.fromTo("#glow", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1.2, duration: 0.3, ease: "power2.out" }, DROP);
+        tl.fromTo("#rays", { opacity: 0, scale: 0.35, rotation: 0 }, { opacity: 1, scale: 1, rotation: 25, duration: 1.0, ease: "power3.out" }, DROP);
+        tl.to("#rays", { opacity: 0, rotation: 45, duration: 0.9, ease: "power1.in" }, DROP + 1.0);
+        tl.fromTo("#shock", { scale: 0.05, opacity: 1 }, { scale: 2.6, opacity: 0, duration: 0.8, ease: "power3.out" }, DROP);
+        tl.fromTo("#bellcirc", { attr: { r: 0 } }, { attr: { r: 105 }, duration: 0.55, ease: "power4.out" }, DROP + 0.28);
+        tl.to("#lstar", { fill: "#000000", duration: 0.25, ease: "power1.out" }, DROP + 0.32);
+        tl.to("#glow", { opacity: 0, scale: 1.6, duration: 0.6, ease: "power2.out" }, DROP + 0.32);
+        tl.fromTo("#logo", { scale: 1.12 }, { scale: 1, duration: 1.3, ease: "expo.out" }, DROP + 0.28);
+        $$("#meet .w").forEach((w, i) => {
+          tl.fromTo(w, { opacity: 0, y: 40, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5 }, DROP + 0.6 + i * 0.07);
+        });
+        tl.to("#meet", { opacity: 0, y: -20, duration: 0.2, ease: "power2.in" }, 5.72);
+        // logo → corner bug
+        tl.to("#logo", { x: 72 - 790, y: 46 - 300, scale: 76 / 340, duration: 0.5, ease: "expo.inOut" }, 5.75);
+        tl.fromTo("#bugword", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4 }, 6.2);
+        tl.to(["#logo", "#bugword"], { opacity: 0, duration: 0.12, ease: "none" }, 13.38);
+
+        // ---------- S3 CATEGORISE 6.0 – 9.0 ----------
+        tl.fromTo("#dash", { rotationY: -55, rotationX: 18, x: 520, z: -700, opacity: 0 }, { rotationY: -14, rotationX: 6, x: 0, z: 0, opacity: 1, duration: 0.85 }, 6.0);
+        tl.to("#dash", { rotationY: -8, rotationX: 3, duration: 2.0, ease: "none" }, 6.85);
+        tl.fromTo("#cat1", { yPercent: 110 }, { yPercent: 0, duration: 0.6 }, 6.15);
+        tl.fromTo("#cat2", { yPercent: 110 }, { yPercent: 0, duration: 0.6 }, 7.55);
+        tl.fromTo("#scan", { y: 0, opacity: 0 }, { y: 560, opacity: 1, duration: 1.2, ease: "none" }, 6.85);
+        tl.set("#scan", { opacity: 1 }, 6.86);
+        tl.to("#scan", { opacity: 0, duration: 0.15, ease: "none" }, 8.05);
+        $$(".drow").forEach((r, i) => {
+          const t = 6.91 + i * 0.12;
+          tl.to(r.querySelector(".un"), { opacity: 0, duration: 0.05, ease: "none" }, t);
+          tl.fromTo(r.querySelector(".chip"), { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(3)" }, t);
+          tl.fromTo(r.querySelector(".hi"), { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, t);
+        });
+        const cc = { v: 0 };
+        tl.to(cc, { v: 10, duration: 1.2, ease: "none", onUpdate: () => { $("#catcount").textContent = Math.min(10, Math.floor(cc.v + 0.09)); } }, 6.91);
+        // whip out
+        tl.to("#s3w", { x: -1500, duration: 0.24, ease: "power3.in" }, 8.81);
+        tl.fromTo("#mb3g", { attr: { stdDeviation: "0 0" } }, { attr: { stdDeviation: "70 0" }, duration: 0.24, ease: "power3.in" }, 8.81);
+
+        // ---------- S4 RECONCILE 9.0 – 11.5 ----------
+        tl.fromTo("#s4w", { x: 1500 }, { x: 0, duration: 0.32, ease: "power3.out" }, 9.0);
+        tl.fromTo("#mb4g", { attr: { stdDeviation: "70 0" } }, { attr: { stdDeviation: "0 0" }, duration: 0.32, ease: "power3.out" }, 9.0);
+        const bankRows = $$("#bankcol .rrow"), bookRows = $$("#bookcol .rrow");
+        bank4.forEach((_, i) => {
+          const t = 9.35 + i * 0.15;
+          tl.fromTo("#lk" + i, { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.26, ease: "power2.inOut" }, t);
+          tl.fromTo("#lk" + i + "d0", { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.2, ease: "back.out(3)" }, t);
+          tl.fromTo("#lk" + i + "d1", { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.2, ease: "back.out(3)" }, t + 0.24);
+          tl.to(bankRows[i].querySelector(".tu"), { rotationX: 90, duration: 0.12, ease: "power2.in" }, t + 0.12);
+          tl.fromTo(bankRows[i].querySelector(".tk"), { rotationX: -90 }, { rotationX: 0, duration: 0.2, ease: "back.out(2)" }, t + 0.24);
+          tl.fromTo([bankRows[i], bookRows[perm[i]]], { borderColor: "#5b74ff" }, { borderColor: "#222227", duration: 0.6, ease: "power2.out", immediateRender: false }, t + 0.24);
+        });
+        tl.fromTo("#garc", { attr: { "stroke-dashoffset": 100 } }, { attr: { "stroke-dashoffset": 0 }, duration: 1.25, ease: "power1.inOut" }, 9.35);
+        const gp = { v: 0 };
+        tl.to(gp, { v: 100, duration: 1.25, ease: "power1.inOut", onUpdate: () => { $("#gpct").textContent = Math.round(gp.v); } }, 9.35);
+        tl.fromTo("#rech", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5 }, 9.2);
+        tl.fromTo("#gauge", { scale: 1 }, { scale: 1.12, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1 }, 10.6);
+        // compress into the packet
+        tl.to("#bankcol", { x: 380, scale: 0.15, opacity: 0, duration: 0.24, ease: "power3.in" }, 11.27);
+        tl.to("#bookcol", { x: -420, scale: 0.15, opacity: 0, duration: 0.24, ease: "power3.in" }, 11.27);
+        tl.to("#links", { opacity: 0, duration: 0.15, ease: "none" }, 11.27);
+        tl.to("#recbar", { y: 80, opacity: 0, duration: 0.2, ease: "power3.in" }, 11.27);
+
+        // ---------- S5 SYNC 11.5 – 13.5 ----------
+        tl.fromTo("#packet", { scale: 0, rotation: -45 }, { scale: 1, rotation: 0, duration: 0.25, ease: "back.out(2.5)" }, 11.5);
+        tl.to("#packet", { x: -480, duration: 0.3, ease: "power3.inOut" }, 11.55);
+        $$("#s5h .w").forEach((w, i) => tl.fromTo(w, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.4 }, 11.55 + i * 0.07));
+        tl.fromTo("#ledger", { opacity: 0, x: 120 }, { opacity: 0.55, x: 0, duration: 0.4 }, 11.6);
+        tl.to("#packet", { x: 140, scaleX: 1.5, scaleY: 0.7, duration: 0.24, ease: "power4.in" }, 11.85);
+        tl.fromTo("#trail", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.24, ease: "power4.in" }, 11.85);
+        tl.set("#packet", { opacity: 0 }, 12.09);
+        tl.to("#trail", { opacity: 0, x: 600, scaleX: 0.1, duration: 0.18, ease: "power2.out" }, 12.09);
+        tl.fromTo("#impact", { scale: 0.2, opacity: 1 }, { scale: 2.6, opacity: 0, duration: 0.5, ease: "power3.out" }, 12.09);
+        tl.to("#ledger", { opacity: 1, duration: 0.05, ease: "none" }, 12.09);
+        tl.fromTo("#ledger", { scale: 1.05 }, { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.5)", immediateRender: false }, 12.09);
+        flashB(12.09, 0.25, 0.3);
+        $$(".jl").forEach((l, i) => {
+          tl.fromTo(l, { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.14, ease: "steps(12)" }, 12.15 + i * 0.125);
+        });
+        tl.fromTo("#posted", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(3)" }, 12.95);
+        tl.to("#s5", { opacity: 0, scale: 1.04, duration: 0.12, ease: "power2.in" }, 13.38);
+
+        // ---------- S6 PROOF 13.5 – 16.5 ----------
+        flash(13.5, 0.3, 0.2);
+        const tiles = $$(".tile");
+        const nums = [["#n1", 300], ["#n2", 75], ["#n3", 20]];
+        tiles.forEach((tile, k) => {
+          const t = 13.5 + k * 0.5;
+          tl.fromTo(tile, { opacity: 0, scale: 1.15, filter: "blur(18px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.28 }, t);
+          tl.fromTo(tile.querySelector(".edge"), { opacity: 1 }, { opacity: 0, duration: 0.8, ease: "power2.out" }, t + 0.05);
+          if (k < 3) {
+            const o = { v: 0 }, [id, to] = nums[k];
+            tl.to(o, { v: to, duration: 0.5, ease: "power3.out", onUpdate: () => { $(id).textContent = Math.round(o.v); } }, t);
+          } else {
+            const o = { v: 0 }, glyphs = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+            tl.to(o, { v: 1, duration: 0.45, ease: "none", onUpdate: () => {
+              const target = "ISO", n = Math.floor(o.v * 9);
+              $("#n4").textContent = target.split("").map((ch, j) => (o.v >= 1 || n > 3 + j * 2 ? ch : glyphs[(n * 7 + j * 13) % glyphs.length])).join("");
+            } }, t);
+          }
+        });
+        tl.to(tiles, { scaleY: 0, opacity: 0, duration: 0.2, ease: "power3.in", stagger: 0.03 }, 16.26);
+
+        // ---------- S7 THE LINE 16.5 – 17.5 ----------
+        l1chars.forEach((s, k) => tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, 16.52 + k * 0.0135));
+        tl.fromTo("#hours", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.18 }, 16.85);
+        tl.fromTo("#strike", { scaleX: 0 }, { scaleX: 1, duration: 0.1, ease: "power3.out" }, 17.0);
+        tl.to("#hours", { y: 160, rotation: 12, opacity: 0, duration: 0.2, ease: "power3.in" }, 17.1);
+        tl.fromTo("#minutes", { opacity: 0, scale: 1.4, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3 }, 17.15);
+
+        // ---------- S8 END CARD 17.5 – 20 ----------
+        flash(17.5, 0.8, 0.22);
+        tl.fromTo("#endglow", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power2.out" }, 17.5);
+        tl.fromTo("#elogo", { scale: 1.5, opacity: 0, filter: "blur(16px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.7 }, 17.5);
+        tl.fromTo("#eword", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.6 }, 17.68);
+        tl.fromTo("#ecta", { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.6 }, 17.84);
+        tl.fromTo("#efirst", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 18.1);
+        tl.fromTo("#glint", { scale: 0, rotation: 0, opacity: 1 }, { scale: 1.4, rotation: 90, duration: 0.28, ease: "power2.out" }, 18.0);
+        tl.to("#glint", { scale: 0, rotation: 180, duration: 0.3, ease: "power2.in" }, 18.28);
+        tl.fromTo("#estar", { fill: "#5b74ff" }, { fill: "#000000", duration: 0.7, ease: "power2.in", immediateRender: false }, 18.0);
+        [["#halo1", 18.4], ["#halo2", 19.1]].forEach(([id, t]) => {
+          tl.fromTo(id, { scale: 1, opacity: 0.9 }, { scale: 1.45, opacity: 0, duration: 0.8, ease: "power2.out" }, t);
+          tl.fromTo("#pill", { scale: 1 }, { scale: 1.05, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, t);
+        });
+        tl.set("#halo1, #halo2", { opacity: 0 }, 0);
+
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>
