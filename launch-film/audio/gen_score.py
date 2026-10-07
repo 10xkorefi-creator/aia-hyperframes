@@ -1,6 +1,6 @@
-"""Synthesise the 20s launch-film score, hit-synced to the edit in index.html.
+"""Synthesise the 34s launch-film score, hit-synced to the edit in index.html.
 
-Pure numpy, deterministic (seeded). 120 BPM -> one beat = 0.5s, drop at 4.0s.
+Pure numpy, deterministic (seeded). 120 BPM -> one beat = 0.5s, drop at 5.0s.
 Run:  python3 audio/gen_score.py   ->  assets/score.wav
 """
 import wave
@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 SR = 44100
-DUR = 20.0
+DUR = 34.0
 N = int(SR * DUR)
 rng = np.random.default_rng(7)
 
@@ -166,117 +166,132 @@ def note(n):  # midi -> hz
     return 440 * 2 ** ((n - 69) / 12)
 
 
-# ---------- arrangement ----------
-# HOOK 0 - 0.5
-place(dry, 0.0, sub_boom(1.4, 38), 0.55)
-place(dry, 0.0, click(3200), 0.25)
-place(dry, 0.25, click(3200), 0.18)
+# ---------- arrangement (34s cut) ----------
+# HOOK 0 - 1.5 : formula typed, enter, #N/A
+place(dry, 0.0, sub_boom(1.4, 38), 0.5)
+for k in range(30):
+    place(dry, 0.12 + k * 0.026, click(rng.uniform(2600, 3600), 0.012), 0.16, pan=rng.uniform(-0.2, 0.2))
+place(dry, 1.0, thud(80), 0.55)
+tt = t_arr(0.3)
+place(dry, 1.0, lowpass(saw(110, tt) * env(len(tt), 0.002, 0.12), 1200), 0.35)   # error buzz
+place(dry, 1.13, lowpass(saw(104, tt) * env(len(tt), 0.002, 0.12), 1200), 0.3)
 
-# CHAOS 0.5 - 2.4 : eighth kicks, 16th hats, climbing arp, impacts on word slams
-for i, t0 in enumerate(np.arange(0.5, 2.4, 0.25)):
-    place(dry, t0, kick(0.8), 0.55 + 0.25 * (t0 - 0.5) / 1.9)
-for t0 in np.arange(0.5, 2.4, 0.125):
+# CHAOS 1.5 - 3.5
+for t0 in np.arange(1.5, 3.5, 0.25):
+    place(dry, t0, kick(0.8), 0.55 + 0.25 * (t0 - 1.5) / 2.0)
+for t0 in np.arange(1.5, 3.5, 0.125):
     place(dry, t0, hat(), 0.18, pan=rng.uniform(-0.4, 0.4))
 arp = [57, 60, 64, 67]
-for k, t0 in enumerate(np.arange(0.5, 2.4, 0.0625)):
-    semis = int((t0 - 0.5) / 0.5)
+for k, t0 in enumerate(np.arange(1.5, 3.5, 0.0625)):
+    semis = int((t0 - 1.5) / 0.5)
     f = note(arp[k % 4] + semis + 12)
     tt = t_arr(0.07)
     s = saw(f, tt) * env(len(tt), 0.001, 0.03)
-    place(dry, t0, lowpass(s, 2500 + 2500 * (t0 - 0.5)), 0.12, pan=0.5 * np.sin(k), send=0.2)
-for t0 in (0.5, 1.0, 1.5, 2.0):
+    place(dry, t0, lowpass(s, 2500 + 2500 * (t0 - 1.5)), 0.12, pan=0.5 * np.sin(k), send=0.2)
+for t0 in (1.5, 2.0, 2.5, 3.0):
     place(dry, t0, kick(1.3), 0.8)
     place(dry, t0, noise_burst(0.5, 0.08, 4000), 0.35, send=0.4)
     place(dry, t0, sub_boom(0.5, 48), 0.4)
 
-# FREEZE + QUESTION 2.4 - 3.6
-for i, t0 in enumerate([2.45, 2.59, 2.73, 2.87, 3.01]):
+# FREEZE + QUESTION 3.5 - 4.7
+for i, t0 in enumerate([3.55 + i * 0.14 for i in range(5)]):
     place(dry, t0, thud(110 - i * 6), 0.7, send=0.25)
-place(dry, 2.95, whoosh(0.45, up=False, peak=0.2), 0.35, send=0.4)   # implode
-place(dry, 3.42, noise_burst(0.12, 0.03, 9000), 0.25)                # crt off
-
-# RISER into drop
-place(dry, 3.35, riser(0.62), 0.6, send=0.3)
-roll = np.concatenate([np.arange(3.5, 3.75, 0.0625), np.arange(3.75, 3.96, 0.03125)])
+place(dry, 4.05, whoosh(0.45, up=False, peak=0.2), 0.35, send=0.4)
+place(dry, 4.52, noise_burst(0.12, 0.03, 9000), 0.25)
+place(dry, 4.37, riser(0.6), 0.6, send=0.3)
+roll = np.concatenate([np.arange(4.5, 4.75, 0.0625), np.arange(4.75, 4.96, 0.03125)])
 for j, t0 in enumerate(roll):
     place(dry, t0, clap(), 0.12 + 0.03 * j)
 
-# DROP 4.0
-place(dry, 4.0, sub_boom(2.2, 36), 0.95)
-place(dry, 4.0, kick(1.5), 0.9)
-place(dry, 4.0, noise_burst(1.2, 0.35, 7000), 0.45, send=0.8)
-place(dry, 4.0, bell(note(81)), 0.35, pan=-0.2, send=0.6)   # the star ignites
-place(dry, 4.0, bell(note(88)), 0.22, pan=0.2, send=0.6)
+# DROP 5.0
+place(dry, 5.0, sub_boom(2.2, 36), 0.95)
+place(dry, 5.0, kick(1.5), 0.9)
+place(dry, 5.0, noise_burst(1.2, 0.35, 7000), 0.45, send=0.8)
+place(dry, 5.0, bell(note(81)), 0.35, pan=-0.2, send=0.6)
+place(dry, 5.0, bell(note(88)), 0.22, pan=0.2, send=0.6)
+place(dry, 6.0, kick(0.7), 0.5)
 
-# chords: Am F C G (one bar = 2s), pads 4.0 -> 17.5, sidechained
 prog = [[57, 60, 64, 69], [53, 57, 60, 65], [48, 55, 60, 64], [55, 59, 62, 67]]
 bass_roots = [45, 41, 36, 43]
-for b, t0 in enumerate(np.arange(4.0, 16.5, 2.0)):
+GROOVE_A, GROOVE_B = 7.0, 29.0
+for b, t0 in enumerate(np.arange(5.0, GROOVE_B, 2.0)):
     ch = prog[b % 4]
     place(pad_bus, t0, supersaw_chord([note(n) for n in ch], 2.05, 2200), 0.5, send=0.35)
     root = note(bass_roots[b % 4])
-    if t0 >= 6.0:
+    if t0 >= GROOVE_A:
         for k8 in range(8):
             tt = t_arr(0.24)
             s = (saw(root, tt) + 0.6 * np.sin(2 * np.pi * root / 2 * tt)) * env(len(tt), 0.003, 0.12)
             place(pad_bus, t0 + k8 * 0.25, lowpass(s, 900), 0.55)
-
-# groove 6.0 - 16.5
-for t0 in np.arange(6.0, 16.5, 0.5):
+for t0 in np.arange(GROOVE_A, GROOVE_B, 0.5):
     place(dry, t0, kick(1.0), 0.7)
     place(dry, t0 + 0.25, hat(open_=(int(t0 * 2) % 4 == 3)), 0.2, pan=0.25)
-for t0 in np.arange(6.5, 16.5, 1.0):
+for t0 in np.arange(GROOVE_A + 0.5, GROOVE_B, 1.0):
     place(dry, t0, clap(), 0.4, send=0.25)
-for t0 in np.arange(6.0, 16.5, 0.125):
+for t0 in np.arange(GROOVE_A, GROOVE_B, 0.125):
     place(dry, t0, hat(), 0.07, pan=-0.3)
-# reveal section 4.0-6.0: half-time heartbeat only
-for t0 in (5.0,):
-    place(dry, t0, kick(0.7), 0.5)
 
-# transitions
-for t0 in (5.85, 8.82, 11.3, 13.38, 16.3):
+for t0 in (6.75, 10.3, 13.8, 17.3, 19.75, 22.35, 25.85, 28.75):
     place(dry, t0, whoosh(0.4, up=True, peak=0.75), 0.4, send=0.3)
 
-# S3 categorise: blips as the scanline hits each row
 pent = [69, 72, 74, 76, 79, 81, 84, 86, 88, 91]
+# F1 bank statements: scan blips
 for i in range(10):
-    place(dry, 6.9 + i * 0.12, blip(note(pent[i])), 0.22, pan=0.3, send=0.3)
-# S4 reconcile plucks per match line
+    place(dry, 7.91 + i * 0.12, blip(note(pent[i])), 0.22, pan=0.3, send=0.3)
+# F2 OCR: scan hiss + field pops
+n = rng.standard_normal(int(1.2 * SR))
+place(dry, 11.0, lowpass(n, 3000) * np.sin(np.linspace(0, np.pi, len(n))) * 0.15, 1.0, send=0.2)
+for i in range(8):
+    place(dry, 11.05 + i * 0.14, blip(note(pent[i]) * 0.5, 0.07), 0.25, pan=-0.3, send=0.2)
+    place(dry, 11.15 + i * 0.14, click(2400, 0.02), 0.12, pan=0.3)
+place(dry, 12.45, bell(note(84), 1.2), 0.18, send=0.5)
+# F3 GST: row ticks, two flags, ITC tally
 for i in range(7):
-    place(dry, 9.35 + i * 0.15 + 0.12, pluck(note(pent[i] - 12)), 0.4, pan=-0.2 + 0.07 * i, send=0.4)
-place(dry, 10.6, bell(note(84), 1.5), 0.2, send=0.5)
-# S5 sync: packet zap + hit + print ticks
-place(dry, 11.82, whoosh(0.3, up=True, peak=0.9), 0.5)
-place(dry, 12.1, thud(70), 0.6, send=0.4)
+    if i in (2, 5):
+        place(dry, 14.6 + i * 0.17, blip(note(57), 0.14), 0.3, send=0.2)
+        place(dry, 14.66 + i * 0.17, blip(note(56), 0.14), 0.25)
+    else:
+        place(dry, 14.6 + i * 0.17, pluck(note(pent[i])), 0.35, send=0.35)
+place(dry, 15.9, bell(note(88), 1.4), 0.2, send=0.5)
+# F4 recon plucks
+for i in range(7):
+    place(dry, 17.85 + i * 0.15 + 0.12, pluck(note(pent[i] - 12)), 0.4, pan=-0.2 + 0.07 * i, send=0.4)
+place(dry, 19.1, bell(note(84), 1.5), 0.2, send=0.5)
+# F5 sync
+place(dry, 20.32, whoosh(0.3, up=True, peak=0.9), 0.5)
+place(dry, 20.6, thud(70), 0.6, send=0.4)
 for i in range(6):
-    place(dry, 12.15 + i * 0.125, click(1500 + 120 * i, 0.04), 0.25)
-# S6 proof tiles
-for t0 in (13.5, 14.0, 14.5, 15.0):
+    place(dry, 20.65 + i * 0.125, click(1500 + 120 * i, 0.04), 0.25)
+# F6 dashboard
+place(dry, 23.1, whoosh(0.6, up=True, peak=0.9), 0.25, send=0.3)
+for i in range(12):
+    place(dry, 23.2 + i * 0.05, click(1800 + 90 * i, 0.02), 0.1)
+place(dry, 23.6, bell(note(81), 1.5), 0.18, send=0.5)
+# PROOF
+for t0 in (26.0, 26.5, 27.0, 27.5):
     place(dry, t0, noise_burst(0.4, 0.06, 5000), 0.3, send=0.3)
     place(dry, t0, sub_boom(0.4, 50), 0.4)
     for k in range(10):
         place(dry, t0 + 0.04 + k * 0.035, click(2600, 0.015), 0.07)
-
-# S7 the line 16.5 - 17.5: groove out, type clicks, strike, pop
+# LINE
 for k in range(26):
-    place(dry, 16.52 + k * 0.0135, click(rng.uniform(2500, 3500), 0.012), 0.12)
-place(dry, 17.0, whoosh(0.15, up=False, peak=0.1), 0.35)
-place(dry, 17.15, pluck(note(84)), 0.6, send=0.5)
-place(dry, 17.15, pluck(note(91)), 0.35, send=0.5)
-
-# S8 end card 17.5 - 20
-place(dry, 17.5, sub_boom(2.4, 34), 0.85)
-place(dry, 17.5, kick(1.4), 0.75)
-place(dry, 17.5, noise_burst(1.5, 0.4, 6000), 0.3, send=0.9)
-place(pad_bus, 17.5, supersaw_chord([note(n) for n in (57, 64, 69, 72, 76)], 2.5, 1800), 0.55, send=0.5)
-place(dry, 18.0, bell(note(93), 2.0), 0.3, send=0.7)      # star glint
-place(dry, 18.0, bell(note(100), 1.6), 0.14, send=0.7)
-for t0 in (18.6, 19.2):
-    place(dry, t0, blip(note(81), 0.12), 0.12, send=0.5)  # CTA pulse
+    place(dry, 29.02 + k * 0.0135, click(rng.uniform(2500, 3500), 0.012), 0.12)
+place(dry, 29.6, whoosh(0.15, up=False, peak=0.1), 0.35)
+place(dry, 29.75, pluck(note(84)), 0.6, send=0.5)
+place(dry, 29.75, pluck(note(91)), 0.35, send=0.5)
+# END CARD
+place(dry, 30.5, sub_boom(2.4, 34), 0.85)
+place(dry, 30.5, kick(1.4), 0.75)
+place(dry, 30.5, noise_burst(1.5, 0.4, 6000), 0.3, send=0.9)
+place(pad_bus, 30.5, supersaw_chord([note(n) for n in (57, 64, 69, 72, 76)], 3.4, 1800), 0.55, send=0.5)
+place(dry, 31.0, bell(note(93), 2.0), 0.3, send=0.7)
+place(dry, 31.0, bell(note(100), 1.6), 0.14, send=0.7)
+for t0 in (31.4, 32.1, 32.8):
+    place(dry, t0, blip(note(81), 0.12), 0.12, send=0.5)
 
 # ---------- sidechain + reverb + master ----------
 side = np.ones(N)
-kick_times = [t for t in np.arange(6.0, 16.5, 0.5)] + [4.0, 5.0, 17.5]
+kick_times = [t for t in np.arange(GROOVE_A, GROOVE_B, 0.5)] + [5.0, 6.0, 30.5]
 tt = np.arange(int(0.35 * SR)) / SR
 duck = 1 - 0.75 * np.exp(-tt / 0.09)
 for k in kick_times:
@@ -299,7 +314,7 @@ mix += verb * 0.6
 
 # fade tail
 fade = np.ones(N)
-fs = int(19.3 * SR)
+fs = int(33.2 * SR)
 fade[fs:] = np.linspace(1, 0, N - fs) ** 1.5
 mix *= fade[:, None]
 
