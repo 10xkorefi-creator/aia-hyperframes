@@ -17,3 +17,8 @@ python3 audio/gen_score.py            # only if you change the score
 npx hyperframes preview               # Studio preview / timeline editing
 npx hyperframes render --quality delivery --output renders/aiaccountant-launch.mp4
 ```
+
+# AIA Bot: 20s WhatsApp video ad (`wa-bot-ad/`)
+
+4:5 (1080×1350, 30fps) WhatsApp-themed ad for Meta and LinkedIn feeds. See `wa-bot-ad/BRIEF.md`.
+Render: `wa-bot-ad/renders/aia-bot-whatsapp-ad-4x5.mp4`

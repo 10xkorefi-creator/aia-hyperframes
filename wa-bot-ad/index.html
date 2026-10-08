@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1350" />
+    <title>AIA Bot WhatsApp Ad</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Disp"; src: url("assets/fonts/InterDisplay-Black.otf"); font-weight: 900; }
+      @font-face { font-family: "Disp"; src: url("assets/fonts/InterDisplay-Bold.otf"); font-weight: 700; }
+      @font-face { font-family: "Disp"; src: url("assets/fonts/InterDisplay-SemiBold.otf"); font-weight: 600; }
+      @font-face { font-family: "Text"; src: url("assets/fonts/Inter-Regular.otf"); font-weight: 400; }
+      @font-face { font-family: "Text"; src: url("assets/fonts/Inter-Medium.otf"); font-weight: 500; }
+      @font-face { font-family: "Mono"; src: url("assets/fonts/jetbrains-mono-latin-500-normal.woff2"); font-weight: 500; }
+      @font-face { font-family: "Mono"; src: url("assets/fonts/jetbrains-mono-latin-700-normal.woff2"); font-weight: 700; }
+
+      :root {
+        --ink: #000000;
+        --mute: #666666;
+        --acc: #314dd0;
+        --wa: #25d366;
+        --wa-deep: #1daa61;
+        --wa-head: #075e54;
+        --wa-wall: #efe7de;
+        --wa-out: #d9fdd3;
+        --wa-tick: #53bdeb;
+        --dk-bg: #0b141a;
+        --dk-head: #1f2c34;
+        --dk-out: #005c4b;
+        --dk-in: #1f2c34;
+        --red: #e5484d;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1350px; overflow: hidden; background: #fff; }
+      #root {
+        position: relative; width: 100%; height: 100%; overflow: hidden; background: #fff; color: var(--ink);
+        font-family: "Text", sans-serif; letter-spacing: -0.02em;
+      }
+      .clip { position: absolute; inset: 0; }
+
+      /* ---------- phone + whatsapp chrome ---------- */
+      .phone { position: absolute; left: 200px; top: 300px; width: 680px; height: 1090px; border-radius: 76px; background: #111; padding: 14px; box-shadow: 0 60px 120px rgba(10, 20, 30, 0.28), inset 0 0 0 2px #2a2a2a; }
+      .screen { position: relative; width: 100%; height: 100%; border-radius: 62px; overflow: hidden; }
+      .notch { position: absolute; left: 50%; top: 14px; width: 150px; height: 36px; margin-left: -75px; border-radius: 20px; background: #000; z-index: 6; }
+      .wahead { position: absolute; left: 0; right: 0; top: 0; height: 168px; padding: 66px 24px 0 18px; display: flex; align-items: center; gap: 14px; z-index: 5; }
+      .wahead .back { width: 18px; height: 18px; border-left: 4px solid currentColor; border-bottom: 4px solid currentColor; transform: rotate(45deg); margin: 0 4px 0 10px; }
+      .wahead .av { width: 70px; height: 70px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+      .wahead .nm { display: flex; flex-direction: column; gap: 2px; }
+      .wahead .nm b { font-family: "Disp"; font-weight: 700; font-size: 32px; letter-spacing: -0.02em; }
+      .wahead .nm span { font-size: 22px; opacity: 0.8; letter-spacing: -0.01em; }
+      .wahead .icons { margin-left: auto; display: flex; gap: 30px; align-items: center; }
+      .wahead .icons i { display: block; }
+      .ic-vid { width: 34px; height: 22px; border: 3.5px solid currentColor; border-radius: 6px; position: relative; }
+      .ic-vid::after { content: ""; position: absolute; right: -14px; top: 2px; border-left: 10px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+      .ic-call { width: 26px; height: 26px; border: 3.5px solid currentColor; border-radius: 0 0 0 18px; border-top-color: transparent; border-right-color: transparent; transform: rotate(-10deg); }
+      .chat { position: absolute; left: 0; right: 0; top: 168px; height: 790px; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 22px 14px; overflow: hidden; }
+      .wall { position: absolute; inset: 0; }
+      .inbar { position: absolute; left: 14px; right: 14px; top: 966px; height: 84px; display: flex; align-items: center; gap: 12px; z-index: 4; }
+      .inbar .field { flex: 1; height: 84px; border-radius: 42px; display: flex; align-items: center; padding: 0 30px; font-size: 28px; }
+      .inbar .mic { width: 84px; height: 84px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+      .inbar .mic i { display: block; width: 18px; height: 30px; border-radius: 10px; background: #fff; }
+
+      .m { position: relative; flex: none; height: 0; overflow: visible; }
+      .b { position: absolute; bottom: 10px; max-width: 520px; padding: 14px 20px 12px; border-radius: 22px; font-size: 30px; line-height: 1.28; letter-spacing: -0.015em; box-shadow: 0 2px 2px rgba(0,0,0,0.08); }
+      .m.o .b { right: 0; border-top-right-radius: 6px; transform-origin: 100% 100%; }
+      .m.i .b { left: 0; border-top-left-radius: 6px; transform-origin: 0 100%; }
+      .meta { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 2px; font-size: 19px; opacity: 0.7; letter-spacing: 0; }
+      .meta.inl { display: inline-flex; margin: 0 0 -6px 14px; vertical-align: bottom; }
+      .tk { width: 30px; height: 16px; display: block; }
+
+      /* dark (hook) */
+      #phA .screen { background: var(--dk-bg); color: #e9edef; }
+      #phA .wahead { background: var(--dk-head); color: #e9edef; }
+      #phA .av { background: #6a7175; }
+      #phA .m.o .b { background: var(--dk-out); color: #e9edef; }
+      #phA .m.i .b { background: var(--dk-in); color: #e9edef; }
+      #phA .inbar .field { background: var(--dk-head); color: #8696a0; }
+      #phA .inbar .mic { background: #00a884; }
+      .datechip.dc { position: absolute; left: 50%; bottom: 14px; margin: 0 0 0 -70px; width: 140px; text-align: center; }
+      .datechip { align-self: center; flex: none; margin: 0 0 14px; padding: 6px 18px; border-radius: 12px; background: #182229; color: #8696a0; font-size: 20px; font-weight: 500; letter-spacing: 0.02em; }
+
+      /* light (bot) */
+      #phB .screen { background: var(--wa-wall); color: #111b21; }
+      #phB .wahead { background: var(--wa-head); color: #fff; }
+      #phB .av { background: #fff; }
+      #phB .m.o .b { background: var(--wa-out); }
+      #phB .m.i .b { background: #fff; }
+      #phB .inbar .field { background: #fff; color: #8696a0; }
+      #phB .inbar .mic { background: var(--wa-head); }
+
+      /* bot cards */
+      .card { width: 500px; }
+      .card .ct { font-size: 22px; font-weight: 500; color: #667781; letter-spacing: 0; text-transform: uppercase; letter-spacing: 0.06em; }
+      .card .big { font-family: "Disp"; font-weight: 900; font-size: 58px; letter-spacing: -0.045em; line-height: 1.1; margin: 2px 0 10px; }
+      .card .rw { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-top: 1px solid #eef0f1; font-size: 25px; }
+      .card .rw span { color: #3b4a54; }
+      .card .rw em { font-style: normal; font-family: "Mono"; font-weight: 500; font-size: 23px; letter-spacing: -0.02em; color: #111b21; }
+      .card .rw small { font-size: 18px; color: #8696a0; margin-left: 8px; }
+      .card .ft { margin-top: 8px; font-size: 19px; color: #8696a0; letter-spacing: 0; }
+      .up { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 999px; background: rgba(29,170,97,0.12); color: #128c4f; font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+      .up i { display: block; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 11px solid currentColor; }
+      .typing { display: flex; gap: 9px; padding: 8px 6px; }
+      .typing i { display: block; width: 14px; height: 14px; border-radius: 50%; background: #8696a0; }
+
+      /* bill photo */
+      .photo { position: relative; width: 420px; height: 330px; border-radius: 14px; overflow: hidden; background: #6b5d4f; margin: -6px -12px 4px; }
+      .photo .tbl { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, #8a7a68, #4b4036 80%); }
+      .paper { position: absolute; left: 60px; top: 22px; width: 300px; height: 300px; padding: 20px 22px; transform: rotate(-6deg) skewX(-3deg); font-family: "Mono"; color: #3b3a36; font-size: 12px;
+        background:
+          linear-gradient(118deg, rgba(0,0,0,0) 38%, rgba(0,0,0,0.12) 41%, rgba(255,255,255,0.25) 43%, rgba(0,0,0,0) 47%),
+          linear-gradient(64deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.1) 62%, rgba(255,255,255,0.2) 64%, rgba(0,0,0,0) 67%),
+          linear-gradient(178deg, rgba(0,0,0,0) 48%, rgba(0,0,0,0.09) 50%, rgba(0,0,0,0) 53%),
+          #f3efe4;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.45); clip-path: polygon(0 2%, 22% 0, 55% 1.5%, 100% 0, 98% 40%, 100% 72%, 97% 100%, 60% 98%, 28% 100%, 1% 97%, 2% 60%); }
+      .paper h5 { font-family: "Disp"; font-weight: 900; font-size: 19px; letter-spacing: -0.02em; text-align: center; }
+      .paper .s { text-align: center; font-size: 10px; letter-spacing: 0.12em; color: #77736a; margin: 3px 0 12px; }
+      .paper .l { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #cfc9b8; }
+      .paper .bar { display: block; height: 7px; margin: 7px 0; background: #d6d0c0; border-radius: 2px; }
+      .paper .tot { font-weight: 700; font-size: 15px; border-bottom: none; padding-top: 8px; }
+      .hlbox { position: absolute; border: 3px solid var(--acc); border-radius: 6px; background: rgba(49,77,208,0.12); }
+      .scanl { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--acc); box-shadow: 0 0 18px 6px rgba(49,77,208,0.55); }
+      .stat { display: inline-flex; align-items: center; gap: 10px; margin-top: 8px; padding: 8px 16px 8px 8px; border-radius: 999px; background: rgba(49,77,208,0.1); color: var(--acc); font-size: 23px; font-weight: 500; letter-spacing: -0.01em; }
+      .okdot { display: block; position: relative; width: 30px; height: 30px; border-radius: 50%; background: var(--acc); flex: none; }
+      .okdot::after { content: ""; position: absolute; left: 10px; top: 5px; width: 7px; height: 14px; border: solid #fff; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+
+      /* ---------- headlines ---------- */
+      .head { position: absolute; left: 0; right: 0; top: 70px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+      .ln { display: block; overflow: hidden; padding: 0 10px 8px; }
+      .ln > span { display: inline-block; font-family: "Disp"; font-weight: 900; font-size: 84px; letter-spacing: -0.05em; line-height: 1.02; }
+      #hA .ln > span { color: #fff; }
+      #hA .ln > span.g { color: #8696a0; }
+
+      #bgA { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 70%, #13232c, var(--dk-bg) 70%); }
+      #tag3 { position: absolute; right: 60px; top: 760px; padding: 16px 26px; border-radius: 18px; background: var(--red); color: #fff; font-family: "Disp"; font-weight: 700; font-size: 34px; letter-spacing: -0.03em; transform: rotate(6deg); box-shadow: 0 20px 50px rgba(229,72,77,0.45); }
+      #tag3 small { display: block; font-family: "Text"; font-weight: 500; font-size: 20px; opacity: 0.9; letter-spacing: 0; }
+
+      /* slam */
+      #slam { position: absolute; inset: 0; background: #fff; }
+      #wipe { position: absolute; left: 540px; top: 675px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: #fff; }
+      .sw { position: absolute; left: 0; right: 0; text-align: center; font-family: "Disp"; font-weight: 900; letter-spacing: -0.055em; line-height: 1; }
+      #sw1 { top: 330px; font-size: 112px; }
+      #sw2 { top: 460px; font-size: 150px; }
+      #sw3 { top: 680px; font-size: 116px; color: var(--wa-deep); }
+      #sw3 .bub { display: inline-block; position: relative; padding: 18px 48px 30px; border-radius: 56px 56px 56px 12px; background: var(--wa-deep); color: #fff; }
+
+      /* bot scene headline: Cash. Dues. Sales. */
+      #hB { top: 74px; flex-direction: row; justify-content: center; gap: 26px; }
+      #hB .w { font-family: "Disp"; font-weight: 900; font-size: 92px; letter-spacing: -0.05em; color: #d6d6da; }
+      #hB .w.on { color: #000; }
+      #hBsub { position: absolute; left: 0; right: 0; top: 190px; text-align: center; font-family: "Text"; font-weight: 500; font-size: 34px; color: var(--mute); letter-spacing: -0.02em; }
+      #hBsub b { color: var(--acc); font-weight: 500; }
+      #hC { position: absolute; left: 0; right: 0; top: 70px; text-align: center; }
+      #hC .ln > span { font-size: 80px; }
+      #hC .ln > span.a { color: var(--acc); }
+
+      .chip { position: absolute; display: flex; align-items: center; gap: 14px; padding: 16px 26px 16px 16px; border-radius: 999px; background: #fff; box-shadow: 0 24px 60px rgba(10, 20, 40, 0.18), 0 0 0 1px rgba(0,0,0,0.04); font-family: "Disp"; font-weight: 700; font-size: 30px; letter-spacing: -0.03em; white-space: nowrap; z-index: 10; }
+      .chip .ico { width: 52px; height: 52px; border-radius: 50%; background: var(--acc); color: #fff; display: flex; align-items: center; justify-content: center; font-family: "Disp"; font-weight: 900; font-size: 22px; letter-spacing: -0.03em; flex: none; }
+      .chip .ico.g { background: var(--wa-deep); }
+      #chip1 { left: 640px; top: 470px; }
+      #chip2 { left: 30px; top: 470px; }
+      #chip3 { left: 700px; top: 470px; }
+      .clock { position: relative; width: 28px; height: 28px; border: 3.5px solid #fff; border-radius: 50%; }
+      .clock::before { content: ""; position: absolute; left: 9px; top: 3px; width: 3.5px; height: 10px; background: #fff; border-radius: 2px; }
+      .clock::after { content: ""; position: absolute; left: 10px; top: 10px; width: 9px; height: 3.5px; background: #fff; border-radius: 2px; }
+
+      /* benefits */
+      #ben { position: absolute; inset: 0; background: #fff; }
+      .bl { position: absolute; left: 0; right: 0; text-align: center; font-family: "Disp"; font-weight: 900; font-size: 104px; letter-spacing: -0.055em; line-height: 1; }
+      .bl .x { position: relative; display: inline-block; color: #000; }
+      .bl .x i { position: absolute; left: -8px; right: -8px; top: 52%; height: 12px; background: var(--red); transform-origin: 0 50%; }
+      #bl1 { top: 330px; }
+      #bl2 { top: 480px; }
+      #bl3 { top: 680px; color: var(--wa-deep); }
+      #free { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
+      #free .q { font-family: "Disp"; font-weight: 700; font-size: 64px; letter-spacing: -0.045em; color: var(--mute); }
+      #free .f { font-family: "Disp"; font-weight: 900; font-size: 190px; letter-spacing: -0.06em; line-height: 0.95; }
+      #free .f.a { color: var(--acc); }
+      #pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; width: 900px; margin-top: 56px; }
+      .pl { display: flex; align-items: center; gap: 12px; padding: 16px 26px; border-radius: 999px; background: #f3f4f8; font-family: "Text"; font-weight: 500; font-size: 30px; letter-spacing: -0.02em; }
+      .pl i { display: block; width: 12px; height: 12px; border-radius: 50%; background: var(--acc); }
+
+      /* end card */
+      #end { position: absolute; inset: 0; background: #fff; }
+      #endglow { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 45% at 50% 108%, rgba(37,211,102,0.22), rgba(37,211,102,0) 70%); }
+      #elogo { position: absolute; left: 450px; top: 150px; width: 180px; height: 180px; }
+      #elogo svg { width: 100%; height: 100%; display: block; }
+      #ename { position: absolute; left: 0; right: 0; top: 345px; text-align: center; font-family: "Mono"; font-weight: 500; font-size: 24px; letter-spacing: 0.14em; color: var(--mute); }
+      #eh { position: absolute; left: 0; right: 0; top: 420px; display: flex; flex-direction: column; align-items: center; }
+      #eh .ln > span { font-size: 88px; }
+      #eh .ln > span.g { color: var(--wa-deep); }
+      #ecta { position: absolute; left: 190px; top: 760px; width: 700px; height: 124px; }
+      #ebtn { position: absolute; inset: 0; border-radius: 999px; background: var(--wa-deep); color: #fff; display: flex; align-items: center; justify-content: center; gap: 22px; font-family: "Disp"; font-weight: 700; font-size: 46px; letter-spacing: -0.035em; box-shadow: 0 24px 60px rgba(29,170,97,0.4); }
+      .bubico { position: relative; width: 50px; height: 46px; border-radius: 50%; background: #fff; }
+      .bubico::after { content: ""; position: absolute; left: 2px; bottom: -6px; border-right: 16px solid #fff; border-bottom: 14px solid transparent; transform: rotate(18deg); }
+      .bubico b { position: absolute; left: 13px; top: 18px; width: 24px; height: 10px; display: flex; gap: 4px; }
+      .bubico b i { display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--wa-deep); }
+      .halo { position: absolute; inset: 0; border-radius: 999px; border: 3px solid var(--wa-deep); }
+      #efree { position: absolute; left: 0; right: 0; top: 920px; text-align: center; font-family: "Disp"; font-weight: 700; font-size: 44px; letter-spacing: -0.035em; }
+      #efree b { color: var(--acc); }
+      #enum { position: absolute; left: 0; right: 0; top: 990px; text-align: center; font-family: "Mono"; font-weight: 500; font-size: 30px; color: #333; letter-spacing: 0.02em; }
+      #efoot { position: absolute; left: 0; right: 0; top: 1150px; text-align: center; font-size: 26px; color: var(--mute); letter-spacing: -0.01em; }
+
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20" data-width="1080" data-height="1350">
+      <svg width="0" height="0" style="position: absolute">
+        <defs>
+          <g id="astar">
+            <path d="M0 0 C7.03241698 6.07345103 10.79502549 12.87143943 14.6875 21.25 C15.24324707 22.42473877 15.79899414 23.59947754 16.37158203 24.80981445 C21.36160395 35.38452004 26.18423524 46.03854016 30.99047852 56.69775391 C34.26939571 63.96317634 37.59166107 71.20441394 41 78.41015625 C41.3474527 79.1456218 41.6949054 79.88108734 42.05288696 80.63883972 C43.72467369 84.17465465 45.40321983 87.70704761 47.09130859 91.23510742 C47.6938592 92.50561396 48.29624449 93.77619892 48.8984375 95.046875 C49.69000244 96.70348145 49.69000244 96.70348145 50.49755859 98.39355469 C53.59748037 105.77293963 53.45604671 112.76767713 50.72265625 120.23046875 C48.59283206 124.92634618 45.95315701 127.67126666 41.4375 130.3125 C35.34289282 132.06857326 30.69084391 131.06843755 25.19921875 128.1953125 C23.60742549 127.30496782 22.02029798 126.40623948 20.4375 125.5 C5.53245108 117.40677367 -10.13650052 114.20543348 -26.9375 118.8125 C-32.9907429 120.97102072 -38.6226359 124.0559459 -44.16479492 127.28881836 C-49.45403416 130.29416852 -54.41580333 132.23976077 -60.60546875 130.84375 C-66.91547775 127.50711411 -70.06419545 123.53714548 -72.5625 116.875 C-74.61027312 106.44997321 -70.84554052 98.24557949 -66.46875 88.96875 C-66.10258575 88.18209961 -65.73642151 87.39544922 -65.35916138 86.58496094 C-64.16068426 84.01280965 -62.95544001 81.44389451 -61.75 78.875 C-60.90756575 77.07118512 -60.06561418 75.26714475 -59.22412109 73.46289062 C-57.91240574 70.65073325 -56.60025866 67.83878463 -55.28622437 65.02770996 C-52.15148176 58.31978426 -49.04196509 51.60058513 -45.9453125 44.875 C-45.08664729 43.01234271 -44.22792414 41.14971212 -43.36914062 39.28710938 C-42.13240045 36.60466673 -40.89651557 33.921852 -39.66381836 31.23754883 C-26.84659878 3.33844284 -26.84659878 3.33844284 -16.375 -2.125 C-10.53142581 -3.05997187 -5.31988595 -2.65994297 0 0 Z" fill="#000" transform="translate(138.25,63.625)" />
+            <path d="M0 0 C0.10199025 6.93753403 0.17171192 13.87487245 0.21972656 20.81298828 C0.23975732 23.16983261 0.26698992 25.52662778 0.30175781 27.88330078 C0.35065172 31.28430362 0.37305502 34.6846455 0.390625 38.0859375 C0.41127014 39.12801361 0.43191528 40.17008972 0.45318604 41.2437439 C0.45524539 48.06192651 -0.44091437 54.06366385 -4 60 C-8.17426067 63.73253199 -12.36600862 65.57745065 -18 66 C-18 66.66 -18 67.32 -18 68 C-16.205625 68.37125 -16.205625 68.37125 -14.375 68.75 C-9.65607912 69.97558546 -5.85097516 71.46486491 -2.86523438 75.55419922 C1.41801041 83.68048916 0.43436366 92.6478212 0.25 101.5625 C0.22990488 103.25583826 0.21165943 104.94919953 0.1953125 106.64257812 C0.15155338 110.76229372 0.0826939 114.88088951 0 119 C-1.31411865 119.18828369 -1.31411865 119.18828369 -2.65478516 119.38037109 C-4.39187744 119.63681396 -4.39187744 119.63681396 -6.1640625 119.8984375 C-7.3082666 120.06520996 -8.4524707 120.23198242 -9.63134766 120.40380859 C-18.39000238 121.95393433 -25.9323991 125.7932306 -33.52294922 130.27001953 C-38.55329687 133.12677701 -43.50328017 134.78864659 -49.35546875 133.46875 C-55.66547775 130.13211411 -58.81419545 126.16214548 -61.3125 119.5 C-63.36027312 109.07497321 -59.59554052 100.87057949 -55.21875 91.59375 C-54.85258575 90.80709961 -54.48642151 90.02044922 -54.10916138 89.20996094 C-52.91068426 86.63780965 -51.70544001 84.06889451 -50.5 81.5 C-49.65756575 79.69618512 -48.81561418 77.89214475 -47.97412109 76.08789062 C-46.66240574 73.27573325 -45.35025866 70.46378463 -44.03622437 67.65270996 C-40.90148176 60.94478426 -37.79196509 54.22558513 -34.6953125 47.5 C-33.83664729 45.63734271 -32.97792414 43.77471212 -32.11914062 41.91210938 C-30.88240045 39.22966673 -29.64651557 36.546852 -28.41381836 33.86254883 C-15.18086331 5.05851585 -15.18086331 5.05851585 -4.625 0.5625 C-2 0 -2 0 0 0 Z" fill="#000" transform="translate(127,61)" />
+            <path d="M0 0 C0.66 0 1.32 0 2 0 C2.00879936 0.91295837 2.00879936 0.91295837 2.01777649 1.84436035 C2.08192739 8.20415721 2.1664024 14.56345817 2.26245117 20.92285156 C2.29561573 23.29322758 2.32367378 25.66368095 2.34643555 28.03417969 C2.38013688 31.45020376 2.43246209 34.8655243 2.48828125 38.28125 C2.49467117 39.33364868 2.5010611 40.38604736 2.50764465 41.47033691 C2.64708722 48.51802194 3.44049141 54.31430763 7.5625 60.25 C11.35611538 62.9736213 15.6251164 64.43038527 20 66 C20 66.66 20 67.32 20 68 C19.32453125 68.24234375 18.6490625 68.4846875 17.953125 68.734375 C11.54736596 71.14116308 7.61614335 72.79820657 4.43432617 79.10180664 C2.69796293 83.25930082 2.52623006 87.09657363 2.48828125 91.55859375 C2.47033005 92.34774673 2.45237885 93.13689972 2.43388367 93.94996643 C2.38013472 96.4457582 2.34600035 98.94136272 2.3125 101.4375 C2.2792955 103.13999982 2.24480298 104.84247504 2.20898438 106.54492188 C2.12442934 110.69647864 2.05745088 114.8479833 2 119 C1.34 119 0.68 119 0 119 C-0.00410889 117.96182129 -0.00821777 116.92364258 -0.01245117 115.85400391 C-0.03441891 111.9583341 -0.08888676 108.06364926 -0.15258789 104.16845703 C-0.17561555 102.49081955 -0.19012744 100.81304063 -0.19555664 99.13525391 C0.01698632 85.19938876 0.01698632 85.19938876 -6 73 C-8.98897545 70.81390396 -8.98897545 70.81390396 -12.3125 69.875 C-13.91544922 69.31425781 -13.91544922 69.31425781 -15.55078125 68.7421875 C-16.76314453 68.37480469 -16.76314453 68.37480469 -18 68 C-18 67.34 -18 66.68 -18 66 C-17.18015625 65.72027344 -16.3603125 65.44054687 -15.515625 65.15234375 C-8.33185897 62.73820601 -8.33185897 62.73820601 -3.3125 57.4375 C-1.6544176 53.09490324 -0.87678928 49.60122186 -0.79467773 44.95605469 C-0.77473251 43.95531921 -0.75478729 42.95458374 -0.73423767 41.92352295 C-0.71752518 40.85047913 -0.70081268 39.7774353 -0.68359375 38.671875 C-0.66281265 37.56773254 -0.64203156 36.46359009 -0.62062073 35.32598877 C-0.55526354 31.80072217 -0.49630436 28.27538141 -0.4375 24.75 C-0.39430164 22.35936735 -0.35068693 19.96874218 -0.30664062 17.578125 C-0.19959628 11.71882827 -0.09780415 5.85945786 0 0 Z" fill="#fff" transform="translate(127,61)" />
+          </g>
+          <g id="tick2">
+            <path d="M1 9 L5 13 L13 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M9 12 L10 13 L18 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          </g>
+          <pattern id="doodle" width="120" height="120" patternUnits="userSpaceOnUse">
+            <circle cx="20" cy="22" r="8" fill="none" stroke="#000" stroke-opacity="0.05" stroke-width="2.5" />
+            <path d="M70 18 l10 10 l-10 10 l-10 -10 Z" fill="none" stroke="#000" stroke-opacity="0.05" stroke-width="2.5" />
+            <path d="M18 78 q12 -14 24 0 t24 0" fill="none" stroke="#000" stroke-opacity="0.05" stroke-width="2.5" />
+            <rect x="84" y="74" width="20" height="16" rx="4" fill="none" stroke="#000" stroke-opacity="0.05" stroke-width="2.5" />
+          </pattern>
+        </defs>
+      </svg>
+
+      <audio id="score" src="assets/score.wav" data-start="0" data-duration="20" data-track-index="20"></audio>
+
+      <!-- ===== S1 HOOK: dark chat with the CA ===== -->
+      <section id="s1" class="clip" data-layout-allow-overlap data-start="0" data-duration="3.0" data-track-index="1">
+        <div id="bgA"></div>
+        <div id="hA" class="head">
+          <div class="ln"><span id="a1">Still waiting on</span></div>
+          <div class="ln"><span id="a2">your CA for numbers?</span></div>
+        </div>
+        <div id="phA" class="phone">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="wahead">
+              <i class="back"></i>
+              <div class="av"><svg width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="27" r="13" fill="#cfd4d6" /><path d="M10 66 q25 -36 50 0" fill="#cfd4d6" /></svg></div>
+              <div class="nm"><b>CA Office</b><span id="seen">last seen 3 days ago</span></div>
+              <div class="icons"><i class="ic-vid"></i><i class="ic-call"></i></div>
+            </div>
+            <div class="chat" id="chatA">
+              <div class="datechip">MONDAY</div>
+              <div class="m o" id="ma1" data-h="72"><div class="b">This month's sales figure? <span class="meta inl">10:02<svg class="tk" viewBox="0 0 20 16" style="color:#8696a0"><use href="#tick2" /></svg></span></div></div>
+              <div class="m o" id="ma2" data-h="72"><div class="b">And cash in bank? <span class="meta inl">13:40<svg class="tk" viewBox="0 0 20 16" style="color:#8696a0"><use href="#tick2" /></svg></span></div></div>
+              <div class="m o" id="ma3" data-h="72"><div class="b">Hello?? <span class="meta inl">18:45<svg class="tk" viewBox="0 0 20 16" style="color:#8696a0"><use href="#tick2" /></svg></span></div></div>
+              <div class="m" id="dc2" data-h="52"><div class="datechip dc">THURSDAY</div></div>
+              <div class="m i" id="ma4" data-h="112"><div class="b">Will share after month-end<br />closing. <span class="meta inl">21:10</span></div></div>
+            </div>
+            <div class="inbar"><div class="field">Message</div><div class="mic"><i></i></div></div>
+          </div>
+        </div>
+        <div id="tag3">3 days later.<small>Still no numbers.</small></div>
+      </section>
+
+      <!-- ===== S2 SLAM ===== -->
+      <section id="s2" class="clip" data-layout-allow-overlap data-start="2.75" data-duration="1.55" data-track-index="2">
+        <div id="wipe"></div>
+        <div id="slam">
+          <div class="sw" id="sw1">Now just ask</div>
+          <div class="sw" id="sw2">your Tally.</div>
+          <div class="sw" id="sw3"><span class="bub">On WhatsApp.</span></div>
+        </div>
+      </section>
+
+      <!-- ===== S3 BOT CHAT ===== -->
+      <section id="s3" class="clip" data-layout-allow-overlap data-start="4.25" data-duration="9.6" data-track-index="3">
+        <div id="hB" class="head"><span class="w" id="hw1">Cash.</span><span class="w" id="hw2">Dues.</span><span class="w" id="hw3">Sales.</span></div>
+        <div id="hBsub">Straight from your Tally. <b>In ~10 seconds.</b></div>
+        <div id="hC">
+          <div class="ln"><span id="c1">Forward the bill.</span></div>
+          <div class="ln"><span id="c2" class="a">We'll do the entry.</span></div>
+        </div>
+
+        <div id="phB" class="phone">
+          <div class="screen">
+            <svg class="wall" width="652" height="1062"><rect width="652" height="1062" fill="url(#doodle)" /></svg>
+            <div class="notch"></div>
+            <div class="wahead">
+              <i class="back"></i>
+              <div class="av"><svg width="50" height="50" viewBox="0 0 256 256"><use href="#astar" /></svg></div>
+              <div class="nm"><b>AIA Bot</b><span>online</span></div>
+              <div class="icons"><i class="ic-vid"></i><i class="ic-call"></i></div>
+            </div>
+            <div class="chat" id="chatB">
+              <div class="m o" id="q1" data-h="72"><div class="b">kitna cash hai? <span class="meta inl">10:42<svg class="tk" viewBox="0 0 20 16" style="color:var(--wa-tick)"><use href="#tick2" /></svg></span></div></div>
+              <div class="m i" id="t1" data-h="62"><div class="b typing"><i></i><i></i><i></i></div></div>
+              <div class="m i" id="r1" data-h="340"><div class="b card">
+                <div class="ct">Cash + Bank balance</div>
+                <div class="big">₹18,42,350</div>
+                <div class="rw"><span>Cash in hand</span><em>₹1,26,400</em></div>
+                <div class="rw"><span>HDFC Bank</span><em>₹12,08,950</em></div>
+                <div class="rw"><span>ICICI Bank</span><em>₹5,07,000</em></div>
+                <div class="ft">As per last Tally sync · 10:42</div>
+              </div></div>
+              <div class="m o" id="q2" data-h="72"><div class="b">Who hasn't paid me yet? <span class="meta inl">10:43<svg class="tk" viewBox="0 0 20 16" style="color:var(--wa-tick)"><use href="#tick2" /></svg></span></div></div>
+              <div class="m i" id="t2" data-h="62"><div class="b typing"><i></i><i></i><i></i></div></div>
+              <div class="m i" id="r2" data-h="300"><div class="b card">
+                <div class="ct">Receivables outstanding</div>
+                <div class="big">₹12,48,300</div>
+                <div class="rw"><span>Sharma Traders<small>45 days</small></span><em>₹4,20,000</em></div>
+                <div class="rw"><span>Mehta Exports<small>32 days</small></span><em>₹3,16,500</em></div>
+                <div class="rw"><span>Gupta &amp; Sons<small>18 days</small></span><em>₹2,50,000</em></div>
+              </div></div>
+              <div class="m o" id="q3" data-h="72"><div class="b">Aaj ki sales? <span class="meta inl">10:43<svg class="tk" viewBox="0 0 20 16" style="color:var(--wa-tick)"><use href="#tick2" /></svg></span></div></div>
+              <div class="m i" id="t3" data-h="62"><div class="b typing"><i></i><i></i><i></i></div></div>
+              <div class="m i" id="r3" data-h="196"><div class="b card">
+                <div class="ct">Aaj ki sales</div>
+                <div class="big">₹2,36,900</div>
+                <span class="up"><i></i>Kal se 12% zyada · 18 invoices</span>
+              </div></div>
+              <div class="m o" id="q4" data-h="372"><div class="b">
+                <div class="photo"><div class="tbl"></div>
+                  <div class="paper">
+                    <h5>SHREE PACKAGING CO.</h5>
+                    <div class="s">TAX INVOICE</div>
+                    <div class="l"><span>Inv No.</span><span>SPC/1187</span></div>
+                    <div class="l"><span>GSTIN</span><span>27AAXCS1187K</span></div>
+                    <i class="bar"></i><i class="bar" style="width:70%"></i><i class="bar" style="width:84%"></i>
+                    <div class="l tot"><span>TOTAL</span><span>48,260.00</span></div>
+                  </div>
+                  <i class="hlbox" id="hb1" style="left:268px; top:80px; width:80px; height:28px"></i>
+                  <i class="hlbox" id="hb2" style="left:248px; top:186px; width:104px; height:32px"></i>
+                  <i class="scanl" id="scan"></i>
+                </div>
+                <div class="meta">10:44<svg class="tk" viewBox="0 0 20 16" style="color:var(--wa-tick)"><use href="#tick2" /></svg></div>
+              </div></div>
+              <div class="m i" id="r4" data-h="300"><div class="b card">
+                <div class="ct">Bill captured</div>
+                <div class="rw"><span>Vendor</span><em>Shree Packaging</em></div>
+                <div class="rw"><span>Invoice</span><em>SPC/1187</em></div>
+                <div class="rw"><span>Amount (incl. GST)</span><em>₹48,260</em></div>
+                <span class="stat"><i class="okdot"></i>Sent to Needs Review</span>
+              </div></div>
+            </div>
+            <div class="inbar"><div class="field">Message</div><div class="mic"><i></i></div></div>
+          </div>
+        </div>
+
+        <div class="chip" id="chip1"><span class="ico"><i class="clock"></i></span>~10 sec reply</div>
+        <div class="chip" id="chip2"><span class="ico g">अ</span>English · Hindi · Hinglish</div>
+        <div class="chip" id="chip3"><span class="ico">24x7</span>Any time</div>
+      </section>
+
+      <!-- ===== S4 BENEFITS ===== -->
+      <section id="s4" class="clip" data-layout-allow-overlap data-start="13.75" data-duration="3.4" data-track-index="4">
+        <div id="ben">
+          <div id="lines">
+            <div class="bl" id="bl1"><span class="x">Tally login.<i id="x1"></i></span></div>
+            <div class="bl" id="bl2"><span class="x">Month-end wait.<i id="x2"></i></span></div>
+            <div class="bl" id="bl3">Just WhatsApp.</div>
+          </div>
+          <div id="free">
+            <div class="q" id="fq">Ask as many times as you like.</div>
+            <div class="f" id="f1">Questions?</div>
+            <div class="f a" id="f2">Free forever.</div>
+            <div id="pills">
+              <div class="pl"><i></i>Unlimited asks</div>
+              <div class="pl"><i></i>Up to 10 companies</div>
+              <div class="pl"><i></i>Your whole team</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== S5 END CARD ===== -->
+      <section id="s5" class="clip" data-layout-allow-overlap data-start="17.1" data-duration="2.9" data-track-index="5">
+        <div id="end">
+          <div id="endglow"></div>
+          <div id="elogo"><svg viewBox="0 0 256 256"><use href="#astar" /></svg></div>
+          <div id="ename">AIA BOT BY AI ACCOUNTANT</div>
+          <div id="eh">
+            <div class="ln"><span id="e1">Chat with your</span></div>
+            <div class="ln"><span id="e2">accounting data.</span></div>
+            <div class="ln"><span id="e3" class="g">Right inside WhatsApp.</span></div>
+          </div>
+          <div id="ecta"><i class="halo" id="halo1"></i><div id="ebtn"><span class="bubico"><b><i></i><i></i><i></i></b></span>Say “Hi” to get started</div></div>
+          <div id="efree"><b>Free forever</b> for the first 100 users</div>
+          <div id="enum">+91 63665 75567</div>
+          <div id="efoot">Works with your Tally data. Ask in English, Hindi or Hinglish.</div>
+        </div>
+      </section>
+
+    </div>
+
+    <script>
+      (function () {
+        const tl = gsap.timeline({ paused: true });
+        const $ = (s) => document.querySelector(s);
+        const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+        // ---------- message helpers (heights are fixed in data-h, so layout is seek-safe) ----------
+        $$(".m").forEach((m) => gsap.set(m, { height: 0 }));
+        $$(".m .b").forEach((b) => gsap.set(b, { autoAlpha: 0, scale: 0.6, y: 24 }));
+        function msgIn(id, t) {
+          const m = $("#" + id);
+          tl.to(m, { height: +m.dataset.h, duration: 0.32, ease: "power3.out" }, t);
+          tl.to(m.querySelector(".b"), { autoAlpha: 1, scale: 1, y: 0, duration: 0.42, ease: "back.out(1.9)" }, t);
+        }
+        function msgOut(id, t) {
+          const m = $("#" + id);
+          tl.to(m.querySelector(".b"), { autoAlpha: 0, scale: 0.8, duration: 0.12, ease: "power2.in" }, t);
+          tl.to(m, { height: 0, duration: 0.2, ease: "power2.inOut" }, t);
+        }
+        function typing(id, t, dur) {
+          msgIn(id, t);
+          $$("#" + id + " .typing i").forEach((d, k) => {
+            tl.fromTo(d, { y: 0, opacity: 0.45 }, { y: -8, opacity: 1, duration: 0.18, ease: "sine.inOut", yoyo: true, repeat: Math.max(1, Math.floor(dur / 0.36) * 2 - 1) }, t + 0.1 + k * 0.1);
+          });
+          msgOut(id, t + dur);
+        }
+        function lines(sel, t, stagger) {
+          tl.fromTo(sel, { yPercent: 110 }, { yPercent: 0, duration: 0.55, ease: "expo.out", stagger: stagger || 0.12 }, t);
+        }
+
+        // ================= S1 HOOK (0 - 3.0) =================
+        gsap.set("#dc2 .dc", { autoAlpha: 0 });
+        lines(["#a1", "#a2"], 0.05, 0.14);
+        tl.from("#phA", { y: 260, duration: 0.7, ease: "expo.out" }, 0);
+        msgIn("ma1", 0.25);
+        msgIn("ma2", 0.6);
+        msgIn("ma3", 0.95);
+        tl.to("#dc2", { height: 52, duration: 0.25, ease: "power2.out" }, 1.4);
+        tl.to("#dc2 .dc", { autoAlpha: 1, duration: 0.2 }, 1.45);
+        msgIn("ma4", 1.55);
+        tl.fromTo("#tag3", { autoAlpha: 0, scale: 1.8, rotation: -8 }, { autoAlpha: 1, scale: 1, rotation: 6, duration: 0.4, ease: "back.out(2.2)" }, 1.95);
+        tl.to("#phA", { x: "+=10", duration: 0.04, repeat: 5, yoyo: true, ease: "none" }, 2.0);
+        tl.to("#a2", { color: "#e5484d", duration: 0.2 }, 2.0);
+        tl.to("#phA", { scale: 0.92, autoAlpha: 0.55, duration: 0.6, ease: "power2.in" }, 2.3);
+
+        // ================= S2 SLAM (2.75 - 4.3) =================
+        tl.fromTo("#wipe", { scale: 0 }, { scale: 60, duration: 0.45, ease: "expo.in" }, 2.75);
+        gsap.set("#slam", { autoAlpha: 0 });
+        tl.set("#slam", { autoAlpha: 1 }, 3.2);
+        tl.fromTo("#sw1", { autoAlpha: 0, scale: 1.6, y: 30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 3.2);
+        tl.fromTo("#sw2", { autoAlpha: 0, scale: 1.6, y: 30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 3.45);
+        tl.fromTo("#sw3 .bub", { autoAlpha: 0, scale: 0.2, rotation: -10 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.6)", transformOrigin: "10% 100%" }, 3.7);
+        tl.to("#slam", { yPercent: -100, duration: 0.4, ease: "expo.in" }, 4.0);
+
+        // ================= S3 BOT CHAT (4.25 - 13.85) =================
+        tl.from("#phB", { y: 900, rotation: 4, duration: 0.8, ease: "expo.out" }, 4.25);
+        tl.from("#hB .w", { y: 60, autoAlpha: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 4.3);
+        tl.from("#hBsub", { y: 20, autoAlpha: 0, duration: 0.5, ease: "power3.out" }, 4.5);
+        gsap.set(["#c1", "#c2"], { yPercent: 110 });
+
+        // Q1 cash
+        msgIn("q1", 4.75);
+        typing("t1", 5.1, 0.55);
+        msgIn("r1", 5.65);
+        tl.to("#hw1", { color: "#000", duration: 0.15 }, 5.7);
+        tl.fromTo("#hw1", { scale: 1.15 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 5.7);
+        tl.fromTo("#chip1", { autoAlpha: 0, scale: 0.4, x: 60 }, { autoAlpha: 1, scale: 1, x: 0, duration: 0.45, ease: "back.out(2)" }, 5.9);
+
+        // Q2 dues
+        msgIn("q2", 7.05);
+        typing("t2", 7.35, 0.5);
+        msgIn("r2", 7.85);
+        tl.to("#hw2", { color: "#000", duration: 0.15 }, 7.9);
+        tl.fromTo("#hw2", { scale: 1.15 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 7.9);
+        tl.fromTo("#chip2", { autoAlpha: 0, scale: 0.4, x: -60 }, { autoAlpha: 1, scale: 1, x: 0, duration: 0.45, ease: "back.out(2)" }, 8.1);
+
+        // Q3 sales
+        msgIn("q3", 9.1);
+        typing("t3", 9.4, 0.45);
+        msgIn("r3", 9.85);
+        tl.to("#hw3", { color: "#000", duration: 0.15 }, 9.9);
+        tl.fromTo("#hw3", { scale: 1.15 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 9.9);
+        tl.fromTo("#chip3", { autoAlpha: 0, scale: 0.4, x: 60 }, { autoAlpha: 1, scale: 1, x: 0, duration: 0.45, ease: "back.out(2)" }, 10.1);
+
+        // Bill upload: headline swap
+        tl.to("#chip1", { autoAlpha: 0, scale: 0.6, duration: 0.25, ease: "power2.in" }, 7.0);
+        tl.to("#chip2", { autoAlpha: 0, scale: 0.6, duration: 0.25, ease: "power2.in" }, 9.05);
+        tl.to("#chip3", { autoAlpha: 0, scale: 0.6, duration: 0.25, ease: "power2.in" }, 10.85);
+        tl.to("#hB .w", { yPercent: -120, autoAlpha: 0, duration: 0.35, ease: "power3.in", stagger: 0.04 }, 10.9);
+        tl.to("#hBsub", { autoAlpha: 0, y: -20, duration: 0.3, ease: "power2.in" }, 10.9);
+        lines(["#c1", "#c2"], 11.25, 0.14);
+        msgIn("q4", 11.15);
+        gsap.set(["#hb1", "#hb2"], { autoAlpha: 0, scale: 1.3 });
+        tl.fromTo("#scan", { y: 0, autoAlpha: 1 }, { y: 326, duration: 0.7, ease: "power1.inOut" }, 11.55);
+        tl.set("#scan", { autoAlpha: 0 }, 12.25);
+        tl.to("#hb1", { autoAlpha: 1, scale: 1, duration: 0.2, ease: "back.out(2)" }, 11.75);
+        tl.to("#hb2", { autoAlpha: 1, scale: 1, duration: 0.2, ease: "back.out(2)" }, 12.1);
+        msgIn("r4", 12.35);
+        tl.fromTo("#r4 .stat", { scale: 0.5 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 12.75);
+
+        // exit
+        tl.to("#phB", { y: 1000, rotation: -3, duration: 0.5, ease: "expo.in" }, 13.35);
+        tl.to("#hC", { y: -300, duration: 0.45, ease: "expo.in" }, 13.4);
+
+        // ================= S4 BENEFITS (13.75 - 17.15) =================
+        tl.fromTo("#bl1", { autoAlpha: 0, scale: 1.5 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "expo.out" }, 13.8);
+        tl.fromTo("#x1", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power3.out" }, 14.1);
+        tl.fromTo("#bl2", { autoAlpha: 0, scale: 1.5 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "expo.out" }, 14.3);
+        tl.fromTo("#x2", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power3.out" }, 14.6);
+        tl.fromTo("#bl3", { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2.5)" }, 14.8);
+        tl.to("#lines", { autoAlpha: 0, y: -80, duration: 0.25, ease: "power2.in" }, 15.4);
+        gsap.set("#free", { autoAlpha: 0 });
+        tl.set("#free", { autoAlpha: 1 }, 15.6);
+        tl.from("#fq", { autoAlpha: 0, y: 30, duration: 0.4, ease: "power3.out" }, 15.6);
+        tl.from("#f1", { autoAlpha: 0, scale: 1.4, duration: 0.3, ease: "expo.out" }, 15.65);
+        tl.from("#f2", { autoAlpha: 0, scale: 0.5, duration: 0.45, ease: "back.out(2.2)" }, 15.95);
+        tl.from("#pills .pl", { autoAlpha: 0, y: 40, scale: 0.8, duration: 0.35, ease: "back.out(2)", stagger: 0.09 }, 16.25);
+        tl.to("#free", { autoAlpha: 0, scale: 0.94, duration: 0.25, ease: "power2.in" }, 16.95);
+
+        // ================= S5 END (17.1 - 20) =================
+        tl.from("#elogo", { scale: 0, rotation: -90, duration: 0.6, ease: "back.out(1.8)" }, 17.15);
+        tl.from("#ename", { autoAlpha: 0, y: 14, duration: 0.4, ease: "power3.out" }, 17.35);
+        lines(["#e1", "#e2", "#e3"], 17.35, 0.1);
+        tl.from("#ecta", { autoAlpha: 0, scale: 0.6, y: 40, duration: 0.5, ease: "back.out(2)" }, 17.85);
+        tl.from("#efree", { autoAlpha: 0, y: 20, duration: 0.4, ease: "power3.out" }, 18.1);
+        tl.from("#enum", { autoAlpha: 0, y: 20, duration: 0.4, ease: "power3.out" }, 18.2);
+        tl.from("#efoot", { autoAlpha: 0, duration: 0.4 }, 18.35);
+        tl.fromTo("#halo1", { scale: 1, autoAlpha: 0.9 }, { scale: 1.25, autoAlpha: 0, duration: 0.6, ease: "power2.out" }, 18.5);
+        tl.fromTo("#ebtn", { scale: 1 }, { scale: 1.04, duration: 0.25, yoyo: true, repeat: 1, ease: "sine.inOut" }, 18.5);
+        tl.fromTo("#halo1", { scale: 1, autoAlpha: 0.9 }, { scale: 1.25, autoAlpha: 0, duration: 0.8, ease: "power2.out", immediateRender: false }, 19.2);
+        tl.to("#root", { duration: 0.01 }, 19.99);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+      })();
+    </script>
+  </body>
+</html>
