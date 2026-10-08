@@ -183,30 +183,44 @@ def pop_in():  # message received: two soft tones
     return s
 
 
-# HOOK 0 - 2.75: dark, ticking clock, unanswered messages
-place(pad_bus, 0.0, supersaw_chord([note(n) for n in (45, 52, 57, 60)], 2.9, 600), 0.45, send=0.3)
-place(dry, 0.0, sub_boom(1.6, 36), 0.5)
-for k, t0 in enumerate(np.arange(0.0, 2.7, 0.25)):
-    place(dry, t0, click(1800 if k % 2 else 2400, 0.02), 0.18)
-for t0 in (0.25, 0.6, 0.95):
-    place(dry, t0, pop_out(), 0.3, send=0.2)
-place(dry, 1.55, pop_in(), 0.25, send=0.3)
-place(dry, 1.95, thud(70), 0.8, send=0.4)
-place(dry, 1.95, noise_burst(0.3, 0.06, 3000), 0.3)
-tt = t_arr(0.35)
-place(dry, 2.0, lowpass(saw(98, tt) * env(len(tt), 0.002, 0.15), 1100), 0.35)
+# HOOK 0 - 3.25: founder waits (fast clock), messages ignored, reply, he explodes
+def cooker_whistle(length=0.8):  # pressure-cooker whistle: noisy, wobbling high tone
+    t = t_arr(length)
+    f = 1650 + 120 * np.sin(2 * np.pi * 7 * t) + 300 * np.minimum(1, t / 0.15)
+    tone = np.sin(2 * np.pi * np.cumsum(f) / SR)
+    hiss = hp(lowpass(rng.standard_normal(len(t)), 6000), 1200)
+    shape = np.minimum(1, t / 0.06) * np.clip((length - t) / 0.25, 0, 1)
+    return (0.55 * tone + 0.6 * hiss) * shape
 
-# SLAM 2.75 - 4.25
-place(dry, 2.6, riser(0.6), 0.6, send=0.3)
-place(dry, 2.75, whoosh(0.45, up=True, peak=0.9), 0.45, send=0.3)
-for t0, f in ((3.2, 1.2), (3.45, 1.2), (3.7, 1.5)):
+
+place(pad_bus, 0.0, supersaw_chord([note(n) for n in (45, 52, 57, 60)], 3.3, 700), 0.35, send=0.3)
+for k, t0 in enumerate(np.arange(0.0, 2.15, 0.25 - 0.0)):
+    place(dry, t0, click(1800 if k % 2 else 2400, 0.02), 0.2)
+for k, t0 in enumerate(np.arange(0.0, 2.15, 0.07)):  # finger drum on the desk
+    place(dry, t0, thud(160 + 10 * (k % 4)), 0.08)
+for t0 in (0.55, 1.05, 1.55):  # calendar flips
+    place(dry, t0 - 0.05, whoosh(0.12, up=False, peak=0.2), 0.25)
+for t0 in (0.3, 0.75, 1.2):
+    place(dry, t0, pop_out(), 0.35, send=0.2)
+place(dry, 1.6, clap(), 0.3)
+place(dry, 1.85, pop_in(), 0.35, send=0.3)
+place(dry, 2.15, sub_boom(1.0, 40), 0.85)
+place(dry, 2.15, kick(1.5), 0.85)
+place(dry, 2.15, noise_burst(0.4, 0.08, 4000), 0.4, send=0.4)
+place(dry, 2.2, cooker_whistle(0.9), 0.32, send=0.3)
+place(dry, 2.25, pluck(note(84)), 0.3)
+
+# SLAM 3.25 - 4.75
+place(dry, 3.1, riser(0.6), 0.6, send=0.3)
+place(dry, 3.25, whoosh(0.45, up=True, peak=0.9), 0.45, send=0.3)
+for t0, f in ((3.7, 1.2), (3.95, 1.2), (4.2, 1.5)):
     place(dry, t0, kick(f), 0.8)
     place(dry, t0, noise_burst(0.35, 0.06, 5000), 0.3, send=0.4)
-place(dry, 3.7, pop_in(), 0.3, send=0.4)
-place(dry, 4.0, whoosh(0.3, up=False, peak=0.2), 0.35)
+place(dry, 4.2, pop_in(), 0.3, send=0.4)
+place(dry, 4.5, whoosh(0.3, up=False, peak=0.2), 0.35)
 
-# DROP 4.25 + groove to 13.75
-DROP, GEND = 4.25, 13.75
+# DROP 4.75 + groove to 14.25
+DROP, GEND = 4.75, 14.25
 place(dry, DROP, sub_boom(1.8, 36), 0.9)
 place(dry, DROP, kick(1.5), 0.85)
 place(dry, DROP, noise_burst(1.0, 0.3, 7000), 0.35, send=0.8)
@@ -232,56 +246,56 @@ for t0 in np.arange(DROP, GEND, 0.125):
     place(dry, t0, hat(), 0.06, pan=-0.3)
 
 # chat events
-for t0 in (4.75, 7.05, 9.1, 11.15):
+for t0 in (5.25, 7.55, 9.6, 11.65):
     place(dry, t0, pop_out(), 0.45, send=0.2)
-for t0 in (5.65, 7.85, 9.85, 12.35):
+for t0 in (6.15, 8.35, 10.35, 12.85):
     place(dry, t0, pop_in(), 0.42, send=0.35)
-for t0 in (5.1, 7.35, 9.4):  # typing ticks
+for t0 in (5.6, 7.85, 9.9):  # typing ticks
     for k in range(5):
         place(dry, t0 + 0.1 + k * 0.09, click(3000, 0.012), 0.08)
 pent = [69, 72, 74, 76, 79, 81, 84, 86, 88, 91]
-for i, t0 in enumerate((5.9, 8.1, 10.1)):
+for i, t0 in enumerate((6.4, 8.6, 10.6)):
     place(dry, t0 - 0.1, whoosh(0.25, up=True, peak=0.8), 0.25)
     place(dry, t0 + 0.05, pluck(note(pent[3 + 2 * i])), 0.35, send=0.4)
 # bill scan
 n = rng.standard_normal(int(0.7 * SR))
-place(dry, 11.55, lowpass(n, 3000) * np.sin(np.linspace(0, np.pi, len(n))) * 0.15, 1.0, send=0.2)
-place(dry, 11.75, blip(note(81), 0.08), 0.25)
-place(dry, 12.1, blip(note(86), 0.08), 0.25)
-place(dry, 12.75, bell(note(88), 1.2), 0.22, send=0.5)
-place(dry, 13.3, whoosh(0.45, up=True, peak=0.9), 0.4, send=0.3)
+place(dry, 12.05, lowpass(n, 3000) * np.sin(np.linspace(0, np.pi, len(n))) * 0.15, 1.0, send=0.2)
+place(dry, 12.25, blip(note(81), 0.08), 0.25)
+place(dry, 12.6, blip(note(86), 0.08), 0.25)
+place(dry, 13.25, bell(note(88), 1.2), 0.22, send=0.5)
+place(dry, 13.8, whoosh(0.45, up=True, peak=0.9), 0.4, send=0.3)
 
-# BENEFITS 13.75 - 17.1
-for t0 in (13.8, 14.3):
+# BENEFITS 14.25 - 17.6
+for t0 in (14.3, 14.8):
     place(dry, t0, kick(1.3), 0.75)
     place(dry, t0, sub_boom(0.4, 50), 0.35)
-for t0 in (14.1, 14.6):
+for t0 in (14.6, 15.1):
     place(dry, t0, whoosh(0.15, up=False, peak=0.1), 0.4)
     place(dry, t0, thud(90), 0.45)
-place(dry, 14.8, pop_in(), 0.45, send=0.4)
-place(dry, 14.8, kick(1.4), 0.7)
-place(pad_bus, 14.8, supersaw_chord([note(n) for n in (57, 64, 69, 72)], 1.0, 2400), 0.4, send=0.4)
-place(dry, 15.4, whoosh(0.3, up=True, peak=0.9), 0.3)
-place(dry, 15.65, kick(1.3), 0.75)
-place(dry, 15.95, sub_boom(1.0, 40), 0.7)
-place(dry, 15.95, kick(1.5), 0.8)
-place(dry, 15.95, bell(note(84), 1.2), 0.25, send=0.6)
+place(dry, 15.3, pop_in(), 0.45, send=0.4)
+place(dry, 15.3, kick(1.4), 0.7)
+place(pad_bus, 15.3, supersaw_chord([note(n) for n in (57, 64, 69, 72)], 1.0, 2400), 0.4, send=0.4)
+place(dry, 15.9, whoosh(0.3, up=True, peak=0.9), 0.3)
+place(dry, 16.15, kick(1.3), 0.75)
+place(dry, 16.45, sub_boom(1.0, 40), 0.7)
+place(dry, 16.45, kick(1.5), 0.8)
+place(dry, 16.45, bell(note(84), 1.2), 0.25, send=0.6)
 for i in range(3):
-    place(dry, 16.25 + i * 0.09, pluck(note(pent[4 + i])), 0.35, send=0.4)
-place(dry, 16.9, riser(0.25), 0.4)
+    place(dry, 16.75 + i * 0.09, pluck(note(pent[4 + i])), 0.35, send=0.4)
+place(dry, 17.4, riser(0.25), 0.4)
 
-# END CARD 17.1 - 20
-place(dry, 17.15, sub_boom(2.4, 34), 0.85)
-place(dry, 17.15, kick(1.4), 0.75)
-place(dry, 17.15, noise_burst(1.4, 0.4, 6000), 0.3, send=0.9)
-place(pad_bus, 17.15, supersaw_chord([note(n) for n in (57, 64, 69, 72, 76)], 2.85, 1800), 0.55, send=0.5)
-place(dry, 17.85, pop_in(), 0.4, send=0.5)
-place(dry, 18.5, bell(note(93), 1.5), 0.25, send=0.7)
-place(dry, 19.2, blip(note(81), 0.12), 0.12, send=0.5)
+# END CARD 17.6 - 20
+place(dry, 17.65, sub_boom(2.4, 34), 0.85)
+place(dry, 17.65, kick(1.4), 0.75)
+place(dry, 17.65, noise_burst(1.4, 0.4, 6000), 0.3, send=0.9)
+place(pad_bus, 17.65, supersaw_chord([note(n) for n in (57, 64, 69, 72, 76)], 2.85, 1800), 0.55, send=0.5)
+place(dry, 18.15, pop_in(), 0.4, send=0.5)
+place(dry, 18.7, bell(note(93), 1.5), 0.25, send=0.7)
+place(dry, 19.35, blip(note(81), 0.12), 0.12, send=0.5)
 
 # ---------- sidechain + reverb + master ----------
 side = np.ones(N)
-kick_times = [t for t in np.arange(DROP, GEND, 0.5)] + [13.8, 14.3, 14.8, 15.65, 15.95, 17.15]
+kick_times = [t for t in np.arange(DROP, GEND, 0.5)] + [14.3, 14.8, 15.3, 16.15, 16.45, 17.65]
 tt = np.arange(int(0.35 * SR)) / SR
 duck = 1 - 0.75 * np.exp(-tt / 0.09)
 for k in kick_times:
