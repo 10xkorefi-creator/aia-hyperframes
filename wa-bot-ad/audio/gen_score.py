@@ -183,40 +183,44 @@ def pop_in():  # message received: two soft tones
     return s
 
 
-# HOOK 0 - 3.25: founder waits (fast clock), messages ignored, reply, he explodes
-def cooker_whistle(length=0.8):  # pressure-cooker whistle: noisy, wobbling high tone
+# HOOK 0 - 3.25: deadpan founder, slow clock, CA excuses ding in, record scratch, dead air
+def ding():  # phone notification: two soft bell tones
+    s = np.zeros(int(0.6 * SR))
+    a = bell(note(88), 0.5) * 0.9
+    b = bell(note(95), 0.45) * 0.7
+    s[:len(a)] += a
+    i = int(0.09 * SR)
+    s[i:i + len(b)] += b[:len(s) - i]
+    return s
+
+
+def scratch(length=0.32):  # vinyl record scratch: fast up-down pitched noise
     t = t_arr(length)
-    f = 1650 + 120 * np.sin(2 * np.pi * 7 * t) + 300 * np.minimum(1, t / 0.15)
+    u = t / length
+    f = 300 + 2600 * np.sin(np.pi * u) ** 2
     tone = np.sin(2 * np.pi * np.cumsum(f) / SR)
-    hiss = hp(lowpass(rng.standard_normal(len(t)), 6000), 1200)
-    shape = np.minimum(1, t / 0.06) * np.clip((length - t) / 0.25, 0, 1)
-    return (0.55 * tone + 0.6 * hiss) * shape
+    n = hp(lowpass(rng.standard_normal(len(t)), 5000), 500)
+    return (0.5 * tone * n + 0.4 * n) * np.sin(np.pi * u)
 
 
-place(pad_bus, 0.0, supersaw_chord([note(n) for n in (45, 52, 57, 60)], 3.3, 700), 0.35, send=0.3)
-for k, t0 in enumerate(np.arange(0.0, 2.15, 0.25 - 0.0)):
-    place(dry, t0, click(1800 if k % 2 else 2400, 0.02), 0.2)
-for k, t0 in enumerate(np.arange(0.0, 2.15, 0.07)):  # finger drum on the desk
-    place(dry, t0, thud(160 + 10 * (k % 4)), 0.08)
-for t0 in (0.55, 1.05, 1.55):  # calendar flips
-    place(dry, t0 - 0.05, whoosh(0.12, up=False, peak=0.2), 0.25)
-for t0 in (0.3, 0.75, 1.2):
-    place(dry, t0, pop_out(), 0.35, send=0.2)
-place(dry, 1.6, clap(), 0.3)
-place(dry, 1.85, pop_in(), 0.35, send=0.3)
-place(dry, 2.15, sub_boom(1.0, 40), 0.85)
-place(dry, 2.15, kick(1.5), 0.85)
-place(dry, 2.15, noise_burst(0.4, 0.08, 4000), 0.4, send=0.4)
-place(dry, 2.2, cooker_whistle(0.9), 0.32, send=0.3)
-place(dry, 2.25, pluck(note(84)), 0.3)
+place(pad_bus, 0.0, supersaw_chord([note(n) for n in (40, 47, 52, 55)], 2.7, 450), 0.4, send=0.3)
+place(dry, 0.0, sub_boom(1.4, 34), 0.45)
+for k, t0 in enumerate(np.arange(0.0, 3.2, 0.5)):
+    place(dry, t0, click(1700 if k % 2 else 2300, 0.02), 0.2, send=0.2)
+for t0 in (0.25, 0.85, 1.45):
+    place(dry, t0, ding(), 0.32, pan=0.35, send=0.4)
+for k in range(5):
+    place(dry, 0.95 + k * 0.12, click(2600, 0.012), 0.12)
+place(dry, 2.6, scratch(), 0.55)
+place(dry, 2.6, thud(75), 0.6, send=0.3)
 
 # SLAM 3.25 - 4.75
-place(dry, 3.1, riser(0.6), 0.6, send=0.3)
-place(dry, 3.25, whoosh(0.45, up=True, peak=0.9), 0.45, send=0.3)
-for t0, f in ((3.7, 1.2), (3.95, 1.2), (4.2, 1.5)):
+place(dry, 3.0, riser(0.4), 0.45, send=0.3)
+place(dry, 3.25, whoosh(0.2, up=True, peak=0.9), 0.45, send=0.3)
+for t0, f in ((3.45, 1.2), (3.75, 1.2), (4.05, 1.5)):
     place(dry, t0, kick(f), 0.8)
     place(dry, t0, noise_burst(0.35, 0.06, 5000), 0.3, send=0.4)
-place(dry, 4.2, pop_in(), 0.3, send=0.4)
+place(dry, 4.05, pop_in(), 0.3, send=0.4)
 place(dry, 4.5, whoosh(0.3, up=False, peak=0.2), 0.35)
 
 # DROP 4.75 + groove to 14.25

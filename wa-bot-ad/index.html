@@ -118,38 +118,32 @@
       .ln > span { display: inline-block; font-family: "Disp"; font-weight: 900; font-size: 84px; letter-spacing: -0.05em; line-height: 1.02; }
 
 
-      /* hook: founder scene */
-      #wallA { position: absolute; inset: 0; background: radial-gradient(ellipse 90% 70% at 40% 45%, #fbf1e2, #efdcc3 75%); }
-      #clock { position: absolute; left: 70px; top: 300px; width: 150px; height: 150px; border-radius: 50%; background: #fff; border: 9px solid #3b3b3b; box-shadow: 0 10px 24px rgba(80, 50, 20, 0.18); }
-      #clock i { position: absolute; left: 50%; bottom: 50%; display: block; transform-origin: 50% 100%; border-radius: 4px; background: #222; }
-      #hrH { width: 8px; height: 36px; margin-left: -4px; }
-      #minH { width: 5px; height: 52px; margin-left: -2.5px; background: #e5484d !important; }
-      #clock b { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #222; }
-      #cal { position: absolute; left: 80px; top: 500px; width: 130px; height: 140px; }
-      #calpage { position: absolute; inset: 0; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 10px 24px rgba(80, 50, 20, 0.18); transform-origin: 50% 0; }
-      #calpage .ch { height: 40px; background: #e5484d; color: #fff; text-align: center; font-family: "Disp"; font-weight: 700; font-size: 24px; line-height: 40px; letter-spacing: 0.04em; }
-      #calpage .cd { position: relative; height: 100px; }
-      #calpage .cd span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: "Disp"; font-weight: 900; font-size: 44px; letter-spacing: -0.03em; color: #222; }
-      #tag3 { position: absolute; left: 40px; top: 660px; padding: 12px 20px; border-radius: 14px; background: var(--red); color: #fff; font-family: "Disp"; font-weight: 700; font-size: 30px; letter-spacing: -0.03em; box-shadow: 0 16px 40px rgba(229,72,77,0.4); white-space: nowrap; }
-      #hA { top: 64px; }
-      #hA .ln > span { font-size: 78px; }
-      #hA .ln > span em { font-style: normal; color: var(--acc); }
-      #founder { position: absolute; left: 0; top: 0; overflow: visible; }
-      .wb { position: absolute; right: 36px; max-width: 420px; padding: 14px 20px 12px; border-radius: 22px; font-size: 30px; line-height: 1.25; letter-spacing: -0.015em; box-shadow: 0 8px 22px rgba(60, 40, 20, 0.16); color: #111b21; }
-      .wb.o { background: var(--wa-out); border-top-right-radius: 6px; transform-origin: 100% 100%; }
-      .wb.i { background: #fff; border-top-left-radius: 6px; transform-origin: 0 100%; }
-      .wb.i b { display: block; font-family: "Disp"; font-weight: 700; font-size: 22px; color: #e5484d; letter-spacing: -0.01em; margin-bottom: 2px; }
-      #wb1 { top: 300px; }
-      #wb2 { top: 392px; }
-      #wb3 { top: 484px; }
-      #wb4 { top: 560px; right: 60px; max-width: 400px; }
-      #burst { position: absolute; left: 600px; top: 270px; width: 440px; height: 286px; }
-      #burst svg { position: absolute; inset: 0; }
-      #burst span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; font-family: "Disp"; font-weight: 900; font-size: 64px; line-height: 0.95; letter-spacing: -0.04em; color: #e5262a; -webkit-text-stroke: 2px #111; }
+      /* hook: real founder photo */
+      #photoWrap { position: absolute; inset: 0; overflow: hidden; background: #2a2018; }
+      #photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 38% 45%; }
+      #grade { position: absolute; inset: 0;
+        background:
+          radial-gradient(ellipse 70% 55% at 80% 18%, rgba(8, 10, 14, 0.55), rgba(8, 10, 14, 0) 70%),
+          linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.72) 100%),
+          radial-gradient(ellipse 120% 100% at 45% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 100%); }
+      #notifs { position: absolute; right: 34px; top: 56px; width: 600px; display: flex; flex-direction: column; gap: 14px; }
+      .nt { display: flex; gap: 16px; align-items: flex-start; padding: 18px 22px; border-radius: 30px; background: rgba(245, 245, 247, 0.86); box-shadow: 0 18px 50px rgba(0,0,0,0.35); color: #111; transform-origin: 100% 0; }
+      .nav { flex: none; width: 58px; height: 58px; border-radius: 16px; background: linear-gradient(160deg, #2fe07a, #18a957); color: #fff; font-style: normal; font-family: "Disp"; font-weight: 900; font-size: 22px; letter-spacing: -0.02em; display: flex; align-items: center; justify-content: center; }
+      .nb { flex: 1; min-width: 0; }
+      .nh { display: flex; justify-content: space-between; align-items: baseline; }
+      .nh b { font-family: "Disp"; font-weight: 700; font-size: 26px; letter-spacing: -0.02em; }
+      .nh span { font-size: 20px; color: #6b6b70; letter-spacing: 0; }
+      .nb p { margin-top: 4px; font-size: 27px; line-height: 1.25; letter-spacing: -0.015em; color: #1c1c1e; }
+      #cap { position: absolute; left: 0; right: 0; bottom: 110px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+      .cl { white-space: nowrap; font-family: "Disp"; font-weight: 900; font-size: 74px; letter-spacing: -0.04em; color: #fff; }
+      .cw { display: inline-block; font-family: "Disp"; font-weight: 900; font-size: 74px; letter-spacing: -0.04em; line-height: 1.08; color: #fff; text-shadow: 0 4px 0 rgba(0,0,0,0.55), 0 10px 30px rgba(0,0,0,0.5); }
+      .cw.hl { color: #111; background: #ffd60a; padding: 0 18px; border-radius: 12px; text-shadow: none; transform: rotate(-3deg); }
+      #day9 { color: #ffd60a; }
+      #freeze { position: absolute; inset: 0; background: #fff; opacity: 0; }
 
       /* slam */
       #slam { position: absolute; inset: 0; background: #fff; }
-      #wipe { position: absolute; left: 815px; top: 790px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: #fff; }
+      #wipe { position: absolute; left: 540px; top: 675px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: #fff; }
       .sw { position: absolute; left: 0; right: 0; text-align: center; font-family: "Disp"; font-weight: 900; letter-spacing: -0.055em; line-height: 1; }
       #sw1 { top: 330px; font-size: 112px; }
       #sw2 { top: 460px; font-size: 150px; }
@@ -183,7 +177,9 @@
       .bl .x i { position: absolute; left: -8px; right: -8px; top: 52%; height: 12px; background: var(--red); transform-origin: 0 50%; }
       #bl1 { top: 330px; }
       #bl2 { top: 480px; }
-      #happy { position: absolute; left: 0; top: 0; overflow: visible; }
+      #happy { position: absolute; left: 330px; top: 820px; width: 420px; height: 420px; border-radius: 40px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.22); transform: rotate(-3deg); }
+      #happy img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      #happy span { position: absolute; left: 16px; right: 16px; bottom: 16px; padding: 10px 16px; border-radius: 16px; background: rgba(255,255,255,0.92); font-family: "Disp"; font-weight: 700; font-size: 30px; letter-spacing: -0.03em; text-align: center; }
       #bl3 { top: 680px; color: var(--wa-deep); }
       #free { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
       #free .q { font-family: "Disp"; font-weight: 700; font-size: 64px; letter-spacing: -0.045em; color: var(--mute); }
@@ -229,44 +225,6 @@
             <path d="M1 9 L5 13 L13 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M9 12 L10 13 L18 3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
           </g>
-          <!-- original "Seth ji" founder (body + face base, no expression; expressions are layered per scene) -->
-          <clipPath id="headclip"><ellipse cx="430" cy="600" rx="165" ry="180" /></clipPath>
-          <g id="fBody">
-            <path d="M110 1300 C100 1010 200 845 430 818 C660 845 760 1010 750 1300 Z" fill="#7b2232" />
-            <ellipse cx="430" cy="1090" rx="250" ry="150" fill="#93303f" opacity="0.55" />
-            <path d="M380 815 L430 900 L480 815 Z" fill="#f1e6cf" />
-            <path d="M360 806 C395 828 465 828 500 806 L506 826 C468 852 392 852 354 826 Z" fill="#5e1824" />
-            <g fill="#d9a441"><circle cx="430" cy="935" r="10" /><circle cx="430" cy="1000" r="10" /><circle cx="430" cy="1065" r="10" /><circle cx="430" cy="1130" r="10" /></g>
-            <path d="M255 900 L325 900 L325 908 L255 908 Z" fill="#5e1824" />
-            <path d="M262 900 L276 880 L290 896 L304 878 L318 900 Z" fill="#f1e6cf" />
-          </g>
-          <g id="fHead">
-            <ellipse cx="430" cy="768" rx="122" ry="52" fill="#b47640" />
-            <ellipse cx="268" cy="618" rx="30" ry="44" fill="#c08048" />
-            <ellipse cx="592" cy="618" rx="30" ry="44" fill="#c08048" />
-            <ellipse cx="272" cy="620" rx="14" ry="24" fill="#a76a36" />
-            <ellipse cx="588" cy="620" rx="14" ry="24" fill="#a76a36" />
-            <ellipse cx="430" cy="600" rx="165" ry="180" fill="#c98b55" />
-            <ellipse cx="430" cy="725" rx="150" ry="70" fill="#bd7e48" clip-path="url(#headclip)" />
-            <ellipse cx="380" cy="482" rx="62" ry="30" fill="#fff" opacity="0.28" transform="rotate(-22 380 482)" />
-            <path d="M266 545 C246 585 250 640 276 676 C284 640 292 600 306 560 C296 552 282 546 266 545 Z" fill="#3a3533" />
-            <path d="M594 545 C614 585 610 640 584 676 C576 640 568 600 554 560 C564 552 578 546 594 545 Z" fill="#3a3533" />
-            <path d="M270 560 C262 590 264 620 276 650" stroke="#8b8580" stroke-width="5" fill="none" stroke-linecap="round" />
-            <path d="M590 560 C598 590 596 620 584 650" stroke="#8b8580" stroke-width="5" fill="none" stroke-linecap="round" />
-            <ellipse cx="430" cy="655" rx="34" ry="30" fill="#b06f3b" />
-            <ellipse cx="420" cy="644" rx="10" ry="7" fill="#d8a06c" opacity="0.7" />
-          </g>
-          <g id="fMoustache">
-            <path d="M322 704 C340 668 396 664 430 682 C464 664 520 668 538 704 C548 732 518 746 500 726 C480 708 456 714 430 716 C404 714 380 708 360 726 C342 746 312 732 322 704 Z" fill="#2a2522" />
-            <path d="M350 700 C370 690 392 690 410 698 M450 698 C468 690 490 690 510 700" stroke="#6d6661" stroke-width="4" fill="none" stroke-linecap="round" />
-          </g>
-          <g id="fGlasses">
-            <circle cx="375" cy="597" r="47" fill="#ffffff" fill-opacity="0.14" stroke="#1d1d1d" stroke-width="8" />
-            <circle cx="485" cy="597" r="47" fill="#ffffff" fill-opacity="0.14" stroke="#1d1d1d" stroke-width="8" />
-            <path d="M421 592 Q430 582 439 592" stroke="#1d1d1d" stroke-width="7" fill="none" />
-            <path d="M328 590 L272 582 M532 590 L588 582" stroke="#1d1d1d" stroke-width="7" stroke-linecap="round" />
-            <path d="M352 575 L366 562 M462 575 L476 562" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.7" />
-          </g>
           <pattern id="doodle" width="120" height="120" patternUnits="userSpaceOnUse">
             <circle cx="20" cy="22" r="8" fill="none" stroke="#000" stroke-opacity="0.05" stroke-width="2.5" />
             <path d="M70 18 l10 10 l-10 10 l-10 -10 Z" fill="none" stroke="#000" stroke-opacity="0.05" stroke-width="2.5" />
@@ -278,85 +236,20 @@
 
       <audio id="score" src="assets/score.wav" data-start="0" data-duration="20" data-track-index="20"></audio>
 
-      <!-- ===== S1 HOOK: the founder waits on his CA ===== -->
+      <!-- ===== S1 HOOK: real founder, deadpan, while his CA's excuses stack up ===== -->
       <section id="s1" class="clip" data-layout-allow-overlap data-start="0" data-duration="3.75" data-track-index="1">
-        <div id="wallA"></div>
-        <div id="clock"><i id="hrH"></i><i id="minH"></i><b></b></div>
-        <div id="cal"><div id="calpage"><div class="ch">OCT</div><div class="cd"><span id="d1">MON</span><span id="d2">TUE</span><span id="d3">WED</span><span id="d4">THU</span></div></div></div>
-        <div id="tag3">3 days later</div>
-        <div id="hA" class="head">
-          <div class="ln"><span id="a1">POV: You asked your CA</span></div>
-          <div class="ln"><span id="a2">for <em>one</em> number.</span></div>
+        <div id="photoWrap"><img id="photo" src="assets/founder.jpg" alt="" /></div>
+        <div id="grade"></div>
+        <div id="notifs">
+          <div class="nt" id="n1"><i class="nav">CA</i><div class="nb"><div class="nh"><b>CA Sharma ji</b><span>Mon 10:02</span></div><p>Sir, shaam tak bhej dunga 🙏</p></div></div>
+          <div class="nt" id="n2"><i class="nav">CA</i><div class="nb"><div class="nh"><b>CA Sharma ji</b><span>Wed 18:45</span></div><p>Sir, thoda busy hoon. Kal pakka.</p></div></div>
+          <div class="nt" id="n3"><i class="nav">CA</i><div class="nb"><div class="nh"><b>CA Sharma ji</b><span>Sat 21:10</span></div><p>Sir, month-end ke baad pakka 🙏</p></div></div>
         </div>
-        <svg id="founder" width="1080" height="1350" viewBox="0 0 1080 1350">
-          <!-- left arm resting on desk, fingers tapping -->
-          <path d="M190 930 L165 1140 L270 1172" stroke="#b9a37c" stroke-width="104" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-          <path d="M190 930 L165 1140 L270 1172" stroke="#f3e9d4" stroke-width="92" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-          <path d="M150 1060 Q175 1080 200 1062" stroke="#d8c7a5" stroke-width="5" fill="none" stroke-linecap="round" />
-          <use href="#fBody" />
-          <!-- right arm raised, phone in hand -->
-          <path d="M660 930 L785 1140 L802 920" stroke="#b9a37c" stroke-width="104" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-          <path d="M660 930 L785 1140 L802 920" stroke="#f3e9d4" stroke-width="92" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-          <rect x="770" y="905" width="64" height="26" rx="6" fill="#d9a441" />
-          <g transform="rotate(-8 815 790)">
-            <rect x="752" y="690" width="126" height="210" rx="20" fill="#151515" />
-            <rect x="762" y="702" width="106" height="186" rx="12" fill="#2a3942" />
-            <rect x="772" y="740" width="70" height="16" rx="6" fill="#005c4b" />
-            <rect x="790" y="766" width="68" height="16" rx="6" fill="#005c4b" />
-            <rect x="772" y="792" width="56" height="16" rx="6" fill="#1f2c34" />
-          </g>
-          <ellipse cx="806" cy="870" rx="50" ry="44" fill="#c98b55" />
-          <ellipse cx="770" cy="845" rx="18" ry="30" fill="#c98b55" transform="rotate(-20 770 845)" />
-          <use href="#fHead" />
-          <ellipse id="flush" cx="430" cy="600" rx="165" ry="180" fill="#ff2d20" opacity="0" />
-          <!-- eyes -->
-          <ellipse cx="375" cy="600" rx="24" ry="19" fill="#fff" />
-          <ellipse cx="485" cy="600" rx="24" ry="19" fill="#fff" />
-          <circle id="pL" cx="375" cy="601" r="10" fill="#1a1a1a" />
-          <circle id="pR" cx="485" cy="601" r="10" fill="#1a1a1a" />
-          <rect x="348" y="578" width="54" height="13" fill="#c98b55" />
-          <rect x="458" y="578" width="54" height="13" fill="#c98b55" />
-          <rect id="bL" x="332" y="533" width="90" height="22" rx="11" fill="#2a2522" transform="rotate(6 420 545)" />
-          <rect id="bR" x="438" y="533" width="90" height="22" rx="11" fill="#2a2522" transform="rotate(-6 440 545)" />
-          <use href="#fMoustache" />
-          <path id="mF" d="M398 758 Q430 740 462 758" stroke="#4a2414" stroke-width="8" fill="none" stroke-linecap="round" />
-          <g id="mS">
-            <ellipse cx="430" cy="760" rx="40" ry="28" fill="#3d0f0f" />
-            <rect x="398" y="736" width="64" height="14" rx="4" fill="#fff" />
-            <ellipse cx="430" cy="776" rx="20" ry="9" fill="#d9534f" />
-          </g>
-          <g id="glasses"><use href="#fGlasses" /></g>
-          <g id="vein" stroke="#e5262a" stroke-width="9" fill="none" stroke-linecap="round">
-            <path d="M523 479 Q537 477 539 463" /><path d="M551 463 Q553 477 567 479" /><path d="M567 491 Q553 493 551 507" /><path d="M539 507 Q537 493 523 491" />
-          </g>
-          <g id="stL" fill="#fff" stroke="#9aa0a8" stroke-width="5"><circle cx="252" cy="600" r="20" /><circle cx="252" cy="600" r="26" /><circle cx="252" cy="600" r="32" /></g>
-          <g id="stR" fill="#fff" stroke="#9aa0a8" stroke-width="5"><circle cx="608" cy="600" r="20" /><circle cx="608" cy="600" r="26" /><circle cx="608" cy="600" r="32" /></g>
-          <!-- desk -->
-          <rect x="0" y="1180" width="1080" height="170" fill="#7a4e32" />
-          <rect x="0" y="1168" width="1080" height="24" fill="#a06a45" />
-          <g id="fingers" fill="#c98b55" stroke="#9c6436" stroke-width="3">
-            <rect id="fg4" x="334" y="1128" width="24" height="50" rx="12" transform="rotate(-18 346 1170)" />
-            <rect id="fg3" x="318" y="1122" width="25" height="58" rx="12.5" transform="rotate(-10 330 1170)" />
-            <rect id="fg2" x="300" y="1124" width="25" height="58" rx="12.5" transform="rotate(-4 312 1170)" />
-            <rect id="fg1" x="282" y="1132" width="24" height="50" rx="12" />
-            <path d="M232 1150 Q262 1128 300 1136 L312 1184 L236 1188 Q222 1170 232 1150 Z" />
-            <rect x="262" y="1140" width="22" height="44" rx="11" transform="rotate(-50 273 1162)" />
-          </g>
-          <g transform="translate(560 1080)">
-            <path d="M0 0 L62 0 L54 92 L8 92 Z" fill="#ffffff" fill-opacity="0.55" stroke="#d9d2c4" stroke-width="3" />
-            <path d="M4 30 L58 30 L54 92 L8 92 Z" fill="#b97a3e" />
-          </g>
-          <g transform="translate(880 1060)">
-            <rect x="0" y="80" width="170" height="30" rx="4" fill="#e9dcc0" /><rect x="8" y="52" width="160" height="30" rx="4" fill="#f3c969" />
-            <rect x="-4" y="24" width="170" height="30" rx="4" fill="#e9dcc0" /><rect x="6" y="-2" width="160" height="28" rx="4" fill="#9fc3e6" />
-            <rect x="74" y="-4" width="10" height="116" fill="#d64545" />
-          </g>
-        </svg>
-        <div id="wb1" class="wb o">Sales kitni hui? <span class="meta inl">10:02<svg class="tk" viewBox="0 0 20 16" style="color:#8696a0"><use href="#tick2" /></svg></span></div>
-        <div id="wb2" class="wb o">Cash kitna hai? <span class="meta inl">13:40<svg class="tk" viewBox="0 0 20 16" style="color:#8696a0"><use href="#tick2" /></svg></span></div>
-        <div id="wb3" class="wb o">Hello?? <span class="meta inl">18:45<svg class="tk" viewBox="0 0 20 16" style="color:#8696a0"><use href="#tick2" /></svg></span></div>
-        <div id="wb4" class="wb i"><b>CA Office</b>Will share after month-end closing. <span class="meta inl">21:10</span></div>
-        <div id="burst"><svg viewBox="0 0 400 260" width="440" height="286"><polygon points="200,6 236,62 300,22 296,90 384,80 334,136 396,186 314,192 332,250 254,214 214,256 180,212 112,248 118,190 30,196 80,140 8,96 92,92 74,24 152,62" fill="#ffd60a" stroke="#111" stroke-width="7" stroke-linejoin="round" /></svg><span>MONTH-<br />END?!</span></div>
+        <div id="cap">
+          <div class="cl"><span class="cw">Day</span> <span class="cw" id="day9">9</span> <span class="cw">of</span> <span class="cw">waiting</span> <span class="cw">for</span></div>
+          <div class="cl"><span class="cw hl">ONE</span> <span class="cw">number</span> <span class="cw">from</span> <span class="cw">my</span> <span class="cw">CA.</span></div>
+        </div>
+        <div id="freeze"></div>
       </section>
 
       <!-- ===== S2 SLAM ===== -->
@@ -455,25 +348,7 @@
             <div class="bl" id="bl1"><span class="x">Tally login.<i id="x1"></i></span></div>
             <div class="bl" id="bl2"><span class="x">Month-end wait.<i id="x2"></i></span></div>
             <div class="bl" id="bl3">Just WhatsApp.</div>
-            <svg id="happy" width="1080" height="1350" viewBox="0 0 1080 1350">
-              <g transform="translate(540 1040) scale(0.72) translate(-430 -600)">
-                <use href="#fBody" />
-                <use href="#fHead" />
-                <ellipse cx="335" cy="672" rx="30" ry="18" fill="#ff7a70" opacity="0.45" />
-                <ellipse cx="525" cy="672" rx="30" ry="18" fill="#ff7a70" opacity="0.45" />
-                <path d="M353 606 Q375 584 397 606 M463 606 Q485 584 507 606" stroke="#1a1a1a" stroke-width="8" fill="none" stroke-linecap="round" />
-                <rect x="332" y="522" width="90" height="22" rx="11" fill="#2a2522" transform="rotate(-8 377 533)" />
-                <rect x="438" y="522" width="90" height="22" rx="11" fill="#2a2522" transform="rotate(8 483 533)" />
-                <path d="M384 738 Q430 800 476 738 Z" fill="#3d0f0f" />
-                <path d="M392 742 L468 742 L462 754 L398 754 Z" fill="#fff" />
-                <use href="#fMoustache" />
-                <use href="#fGlasses" />
-              </g>
-              <g id="spark" fill="#ffd60a" stroke="#111" stroke-width="4" stroke-linejoin="round">
-                <path d="M270 880 L282 912 L314 924 L282 936 L270 968 L258 936 L226 924 L258 912 Z" />
-                <path d="M820 860 L830 886 L856 896 L830 906 L820 932 L810 906 L784 896 L810 886 Z" />
-              </g>
-            </svg>
+            <div id="happy"><img src="assets/founder-happy.jpg" alt="" /><span>Ab koi wait nahi.</span></div>
           </div>
           <div id="free">
             <div class="q" id="fq">Ask as many times as you like.</div>
@@ -538,65 +413,28 @@
           tl.fromTo(sel, { yPercent: 110 }, { yPercent: 0, duration: 0.55, ease: "expo.out", stagger: stagger || 0.12 }, t);
         }
 
-        // ================= S1 HOOK: the founder waits (0 - 3.25) =================
-        // caption + founder are on screen from frame 0 (thumb-stop frame)
-        tl.fromTo(["#a1", "#a2"], { scale: 0.85 }, { scale: 1, duration: 0.35, ease: "back.out(2)", stagger: 0.08 }, 0);
-        // time flies: clock spins, calendar flips Mon -> Thu
-        tl.fromTo("#minH", { rotation: 0 }, { rotation: 1440, duration: 2.1, ease: "power1.in" }, 0);
-        tl.fromTo("#hrH", { rotation: 60 }, { rotation: 180, duration: 2.1, ease: "power1.in" }, 0);
-        ["#d2", "#d3", "#d4"].forEach((d, k) => {
-          const t = 0.55 + k * 0.5;
-          tl.fromTo("#calpage", { scaleY: 1 }, { scaleY: 0.1, duration: 0.08, ease: "power2.in", immediateRender: false }, t - 0.08);
-          tl.set(["#d1", "#d2", "#d3", "#d4"], { autoAlpha: 0 }, t);
-          tl.set(d, { autoAlpha: 1 }, t);
-          tl.to("#calpage", { scaleY: 1, duration: 0.12, ease: "back.out(2)" }, t);
+        // ================= S1 HOOK: the founder stares, the excuses stack (0 - 3.25) =================
+        // frame 0 already shows him + the first caption line (thumb-stop frame)
+        tl.fromTo("#photo", { scale: 1.0 }, { scale: 1.1, duration: 3.25, ease: "none" }, 0);
+        $$("#cap .cw").forEach((w, k) => {
+          tl.fromTo(w, { autoAlpha: k < 5 ? 1 : 0, scale: k < 5 ? 1 : 1.6 }, { autoAlpha: 1, scale: 1, duration: 0.18, ease: "back.out(2.5)" }, k < 5 ? 0 : 0.95 + (k - 5) * 0.12);
         });
-        gsap.set(["#d2", "#d3", "#d4"], { autoAlpha: 0 });
-        tl.fromTo("#tag3", { autoAlpha: 0, scale: 1.8, rotation: -14 }, { autoAlpha: 1, scale: 1, rotation: -6, duration: 0.35, ease: "back.out(2.2)" }, 1.6);
-        // impatient finger tapping + glance at phone
-        ["#fg1", "#fg2", "#fg3", "#fg4"].forEach((f, k) => {
-          tl.fromTo(f, { y: 0 }, { y: -22, duration: 0.07, yoyo: true, repeat: 13, ease: "sine.inOut", immediateRender: false }, k * 0.05);
+        tl.fromTo("#cap .hl", { rotation: -3 }, { rotation: -3, scale: 1.12, duration: 0.12, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, 1.15);
+        ["#n1", "#n2", "#n3"].forEach((n, k) => {
+          tl.fromTo(n, { autoAlpha: 0, y: -60, scale: 0.92 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.7)" }, 0.25 + k * 0.6);
         });
-        tl.to(["#pL", "#pR"], { x: 7, y: 4, duration: 0.2, ease: "power2.out" }, 0.15);
-        // messages fired off, ignored
-        ["#wb1", "#wb2", "#wb3"].forEach((b, k) => {
-          tl.fromTo(b, { autoAlpha: 0, scale: 0.4, y: 40 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.35, ease: "back.out(2)" }, 0.3 + k * 0.45);
-        });
-        tl.to("#flush", { opacity: 0.18, duration: 1.2, ease: "none" }, 0.4);
-        tl.to("#bL", { rotation: 16, svgOrigin: "420 545", duration: 1.2, ease: "power1.in" }, 0.4);
-        tl.to("#bR", { rotation: -16, svgOrigin: "440 545", duration: 1.2, ease: "power1.in" }, 0.4);
-        // the reply...
-        tl.fromTo("#wb4", { autoAlpha: 0, scale: 0.4, y: 40 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.35, ease: "back.out(2)" }, 1.85);
-        tl.to(["#pL", "#pR"], { scale: 0.55, svgOrigin: "430 597", duration: 0.12 }, 1.95);
-        // ...and he explodes
-        tl.to(["#wb1", "#wb2", "#wb3"], { autoAlpha: 0, y: -30, duration: 0.2, ease: "power2.in" }, 2.1);
-        tl.to("#flush", { opacity: 0.55, duration: 0.15 }, 2.15);
-        tl.to("#bL", { rotation: 28, svgOrigin: "420 545", duration: 0.12 }, 2.15);
-        tl.to("#bR", { rotation: -28, svgOrigin: "440 545", duration: 0.12 }, 2.15);
-        tl.set("#mF", { autoAlpha: 0 }, 2.15);
-        tl.set("#mS", { autoAlpha: 1 }, 2.15);
-        gsap.set(["#mS", "#vein"], { autoAlpha: 0 });
-        tl.fromTo("#glasses", { y: 0 }, { y: -26, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 2.15);
-        tl.fromTo("#vein", { autoAlpha: 0, scale: 0, svgOrigin: "545 485" }, { autoAlpha: 1, scale: 1, svgOrigin: "545 485", duration: 0.3, ease: "back.out(3)" }, 2.2);
-        tl.fromTo("#vein", { scale: 1 }, { scale: 1.2, svgOrigin: "545 485", duration: 0.12, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, 2.5);
-        tl.fromTo("#founder", { x: 0 }, { x: 9, duration: 0.035, yoyo: true, repeat: 15, ease: "none", immediateRender: false }, 2.15);
-        [["#stL", -1], ["#stR", 1]].forEach(([st, dir]) => {
-          $$(st + " circle").forEach((c, k) => {
-            tl.fromTo(c, { autoAlpha: 0, scale: 0.2, x: 0, y: 0, transformOrigin: "50% 50%" },
-              { autoAlpha: 0.95, scale: 1.4, x: dir * (40 + k * 26), y: -50 - k * 30, duration: 0.5, ease: "power2.out" }, 2.2 + k * 0.08);
-            tl.to(c, { autoAlpha: 0, duration: 0.3 }, 2.75 + k * 0.08);
-          });
-        });
-        tl.fromTo("#burst", { autoAlpha: 0, scale: 0.2, rotation: -30 }, { autoAlpha: 1, scale: 1, rotation: -8, duration: 0.4, ease: "back.out(2.6)" }, 2.2);
-        tl.fromTo("#burst", { scale: 1 }, { scale: 1.06, duration: 0.1, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, 2.6);
-
+        // last excuse lands; he hasn't moved. punch-in + freeze, then hard cut
+        tl.to("#photo", { scale: 1.22, duration: 0.18, ease: "power3.out" }, 2.6);
+        tl.to("#photo", { filter: "grayscale(0.85) contrast(1.15)", duration: 0.12 }, 2.6);
+        tl.to("#notifs", { x: 8, duration: 0.04, yoyo: true, repeat: 5, ease: "none" }, 2.6);
+        tl.fromTo("#freeze", { opacity: 0 }, { opacity: 0.85, duration: 0.05, yoyo: true, repeat: 1, ease: "none", immediateRender: false }, 2.6);
         // ================= S2 SLAM (3.25 - 4.8) =================
-        tl.fromTo("#wipe", { scale: 0 }, { scale: 60, duration: 0.45, ease: "expo.in" }, 3.25);
+        tl.fromTo("#wipe", { scale: 0 }, { scale: 60, duration: 0.2, ease: "expo.in" }, 3.25);
         gsap.set("#slam", { autoAlpha: 0 });
-        tl.set("#slam", { autoAlpha: 1 }, 3.7);
-        tl.fromTo("#sw1", { autoAlpha: 0, scale: 1.6, y: 30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 3.7);
-        tl.fromTo("#sw2", { autoAlpha: 0, scale: 1.6, y: 30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 3.95);
-        tl.fromTo("#sw3 .bub", { autoAlpha: 0, scale: 0.2, rotation: -10 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.6)", transformOrigin: "10% 100%" }, 4.2);
+        tl.set("#slam", { autoAlpha: 1 }, 3.45);
+        tl.fromTo("#sw1", { autoAlpha: 0, scale: 1.6, y: 30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 3.45);
+        tl.fromTo("#sw2", { autoAlpha: 0, scale: 1.6, y: 30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.3, ease: "expo.out" }, 3.75);
+        tl.fromTo("#sw3 .bub", { autoAlpha: 0, scale: 0.2, rotation: -10 }, { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.6)", transformOrigin: "10% 100%" }, 4.05);
         tl.to("#slam", { yPercent: -100, duration: 0.4, ease: "expo.in" }, 4.5);
 
         // ================= S3 BOT CHAT (4.75 - 14.35) =================
@@ -655,8 +493,7 @@
         tl.fromTo("#bl2", { autoAlpha: 0, scale: 1.5 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "expo.out" }, 14.8);
         tl.fromTo("#x2", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power3.out" }, 15.1);
         tl.fromTo("#bl3", { autoAlpha: 0, scale: 0.4 }, { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(2.5)" }, 15.3);
-        tl.fromTo("#happy", { autoAlpha: 0, y: 260 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "back.out(1.6)" }, 15.3);
-        tl.fromTo("#spark path", { scale: 0, rotation: -90, transformOrigin: "50% 50%" }, { scale: 1, rotation: 0, duration: 0.35, ease: "back.out(3)", stagger: 0.1 }, 15.55);
+        tl.fromTo("#happy", { autoAlpha: 0, y: 260, rotation: 6 }, { autoAlpha: 1, y: 0, rotation: -3, duration: 0.5, ease: "back.out(1.6)" }, 15.3);
         tl.to("#lines", { autoAlpha: 0, y: -80, duration: 0.25, ease: "power2.in" }, 15.9);
         gsap.set("#free", { autoAlpha: 0 });
         tl.set("#free", { autoAlpha: 1 }, 16.1);
